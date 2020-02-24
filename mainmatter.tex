@@ -1,5 +1,27 @@
 \section{Introduction}\label{sec:intro}
+zbMATH classified more than 
+\href{https://zbmath.org/?q=%2A+py%3A2019}%
+{80k} articles in 2019 according to the Mathematical Subject Classification~(MSC).
+With more than
+\href{https://msc2020.org}%
+{5000} class labels, this classification task requires significant depth-knowledge of the particular fields of mathematics in order to obtain correct fine-grained classifications of the articles.
+Therefore the classification is two-fold.
+At first, the articles are pre-classified into one of \href{https://msc2020.org}%
+{63} main classifications, which are the two first digits of the first MSC label of each article.
+In a second step, domain expert assigns fine-grained classification labels in their area of expertise.
 
+In this paper, we focus on the coarse-grained classification and explore how modern machine learning technology can be employed to automate this process.
+In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}. 
+We formulate the following research questions:
+\begin{enumerate}
+  \item Which measures are appropriate to measure the quality of automatic classifications?
+  \item Does the inclusion of mathematical formulae improve the quality of the classifications?
+  \item Does the Part of Speech (POS) preprocessing improve the quality of classifications?
+  \item Which features (Title, Abstract, References) are most important for the correct classification?
+  \item How does the quality of automatic classification compare to manual classifications?
+  \item How to avoid misclassifications in the future?
+  \item How can the best performing method be integrated into the current production pipeline at zbMATH?
+\end{enumerate}
 \section{Method}\label{sec:method}
 
 \section{Evaluation}\label{sec:eval}
