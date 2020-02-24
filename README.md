@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/ag-gipp/20CicmAutoMsc.svg?token=q5hPe6jY6vRAR3six37X&branch=master)](https://travis-ci.com/ag-gipp/20CicmAutoMsc)
 LaTeX paper template
 ====================
 
