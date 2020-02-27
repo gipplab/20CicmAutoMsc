@@ -26,6 +26,23 @@ We formulate the following research questions:
 
 \section{Evaluation}\label{sec:eval}
 
-\section{Conclusion \& Future Work}\label{sec.concl}
+\section{pre-Evaluation}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.1\textwidth]{zbMr.png}
+  \includegraphics[width=1.1\textwidth]{mrZb.png}
+  \caption{$F_1$ score of the classification quality of the (other Institution, MSCbR alorith, and the S14 algoritm) grouped by MSC. The top figure uses the zbMATH primary MSC as baseline and the bottom figure uses the MR primary MSC respectively. MSC classes with less than 200 samples were omitted. }
+\end{figure}
 
+\section{Conclusion \& Future Work}\label{sec.concl}
+Regarding the research questions, we summarize our findings as follows:
+\begin{enumerate}
+  \item The quality of the classification for the coarse grained primary MSC can be evaluated with classical information retrieval methods such as precision, recall and accuracy. The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account. We therefore introduced a non-strict evaluation measure that also counts non-primary MSCs as correct.
+  \item We did not find evidence that mathematical expressions improve the coarse grained primary classification.
+  \item We found that modern NN such as Bert outperform the POS tagging based model developed by \cite{SchonebergS14}. mathematical expressions improve the coarse grained primary classification.
+  \item For most classes the reference based approach outperformed the POS tagged based approach.
+  \item The manual classification is significantly better for most classes. 
+  \item How to avoid misclassifications in the future?
+  \item How can the best performing method be integrated into the current production pipeline at zbMATH?
+\end{enumerate}
 \printbibliography[keyword=primary]
