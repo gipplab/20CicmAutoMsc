@@ -11,7 +11,7 @@ At first, the articles are pre-classified into one of \href{https://msc2020.org}
 In a second step, domain expert assigns fine-grained classification labels in their area of expertise.
 
 In this paper, we focus on the coarse-grained classification and explore how modern machine learning technology can be employed to automate this process.
-In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}. 
+In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
 We formulate the following research questions:
 \begin{enumerate}
   \item Which measures are appropriate to measure the quality of automatic classifications?
@@ -27,18 +27,58 @@ To investiagte the given problem, we first create a test and training dataset, s
 \subsection{Generation of a test and training dataset}
 \subsection{Definition of evaluation metrics}
 \subsection{Encoding of the input data}
+
+
+For our encodings, we prepared the following sources:
+
+\begin{description}
+  \item[titls] the titles of the publications.
+  \item[texts] the abstract texts of the publications
+  \item[refs] the reference mscs of the publications (space separated strings)
+  \item[tite] the titles and texts of the publications combined (strings concatenated)
+  \item[tiref]: the titles and reference mscs of the publications combined (strings concatenated)
+  \item[teref]: the abstract texts and reference mscs of the publications combined (strings concatenated)
+  \item[titer]: the titles, and abstract texts, and reference mscs of the publications combined (strings concatenated)
+\end{description}
+
+
+
+
+
+Each of these sources was encoded and classified separately.
 \subsection{Clustering}
+
+We encoded our sources using the 'TfidfVectorizer' of the python package Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}}. We used 'utf-8' encoding, and did not perform accent striping or other character normalization except lowercasing. Furthermore, we used the 'word' analyzer without custom stopword list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation. The resulting vectors consist of float64 entries with 'l2' norm unit output rows.
+
+
+
+Our encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.
+
+We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn. We employed the 'l2' penalty norm with 1e-4 ($10^-4$) tolerance stopping criterion and 1.0 regularization. Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed. We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations.
 \subsection{Reproducibility}
 \url{https://mathscinet.ams.org/mathscinet-getitem?mr=3444005}
 
 \section{Evaluation}\label{sec:eval}
 
 \subsection{pre-Evaluation}
+
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1.1\textwidth]{zbMr.png}
-  \includegraphics[width=1.1\textwidth]{mrZb.png}
-  \caption{$F_1$ score of the classification quality of the (other Institution, MSCbR alorith, and the S14 algoritm) grouped by MSC. The top figure uses the zbMATH primary MSC as baseline and the bottom figure uses the MR primary MSC respectively. MSC classes with less than 200 samples were omitted. }
+  \includegraphics[width=1.1\textwidth]{mathEncoding.png}
+  \caption{Effect of mathematical symbols on the encoding.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.1\textwidth]{POSeffekt.png}
+  \caption{Effect of POS tagging symbols on the encoding.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.1\textwidth]{overview1.png}
+  \includegraphics[width=1.1\textwidth]{overview2.png}
+  \caption{$F_1$ score of the classification quality of the methods mr1, titer, ref, titls, text grouped by MSC. We use the zbMATH primary MSC as baseline. MSC classes with less than 200 samples were omitted. An interactive version of the figure is available from \url{automsceval.formulasearchengine.com}.}
 \end{figure}
 
 
@@ -83,6 +123,12 @@ To investiagte the given problem, we first create a test and training dataset, s
 \end{table*}
 
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{confusion.png}
+  \caption{Confusion matrix (titer).}
+\end{figure}
+
 \section{Conclusion \& Future Work}\label{sec.concl}
 Regarding the research questions, we summarize our findings as follows:
 \begin{enumerate}
@@ -92,7 +138,7 @@ Regarding the research questions, we summarize our findings as follows:
   \item For most classes the reference based approach outperformed the POS tagged based approach.
   \item The manual classification is significantly better for most classes. 
   \item How to avoid misclassifications in the future?
-  \item How can the best performing method be integrated into the current production pipeline at zbMATH?
+  \item We consider our current model as good enough for the primary MSC pre classification task. We developed an open API which can be accessed from \url{https://automscbackend.formulasearchengine.com}.
 \end{enumerate}
 
 \paragraph{Acknowledgments} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
