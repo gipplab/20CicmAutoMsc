@@ -39,9 +39,47 @@ In addition we excluded articles that are not finally published and processed an
 After applying all these filters, we split the resulting list of 442'382 articles into a test and training set.
 For the test set it was important to us that we can also measure the bias of our zbMATH classification labels.
 Therefore, we used the articles of which we knew the classification by the MR service as training set.
-The resulting training set consists of 32'230 articles and the training set of 410'152 articles.
+The resulting training set consists of $n=32'230$ articles and the training set of 410'152 articles.
 To ensure that these selection does not introduce additional bias, we did also compute standard 10 fold cross validation.
+\paragraph{Definition of article data format}
+To maximize rerproducibility, we created a dedicated dataset from these articles which we aim to share with other researchers.
+However, currently legal restrictions apply and the dataset can not yet provided for anonymous download at this date.
+For each of the 442'382 articles in the dataset has the following fields
+\begin{description}
+  \item[de] An eight digit id of the document.
+  \item[title] The english title of the document, with LaTeX macros for mathematical symbols~\cite{Schubotz2019b}.
+  \item[text] The text of the abstract with LaTeX macros.
+  \item[mscs] A comma seperated list of MSC labels generated from the references. For each reference in the document we look up the MSC labels of the reference. For example, if document has 3 reference $A,B,C$ that are also in the also documents in zbMATH and the MSC labels of $A,B,C$ are $a_1$ and $a_2$, $b_1$, and $c_1-c_3$ the field mscs reads $a_1  a_2, b_1, c_1 c_2 c_3.$
+\end{description}
+No additional data is provided and the field DE must not be used for training.
 \subsection{Definition of evaluation metrics}
+While the assignment of all MSC labels to each article is a multi label classification task the assignment of the primary coarse grained MSC, which we investigate in this paper is a multiclass classfication problem.
+With $k=63$ classes the probablity of randomly chosing the correct class of size $c_i$ is rather low
+\(
+P_i=\frac{c_i}{n}
+\)
+Moreover, the dataset is not balanced. In particular the entropy \(
+H=-\sum_{i=1}^{k'}P_i\log P_i=3.44,
+\)
+can be used to measure the imbalance \[
+\hat{H}=\frac{H}{\log k'}=.83
+\]
+by normalizing it to the maximum entropy $\log k'.$
+Here $k>k'=62$ are all classes in the test dataset which have at least one item. 
+In the test dataset no entries for the MSC class 97 were included.
+
+To take into account the imbalance of the dataset, we use weighted versions of precision $p$, recall $r$ and the $F_1$ measure. In particular, $p$ is defined as \[
+\frac{\sum_{i=1}^{k}c_ip_i}{n}
+\] with the class precision $p_i$.
+$r$ and $F_1$ are defined analog.
+
+Moreover, we eliminate the effect of classes with only few samples by disregarding all classes with less than 200 entries.
+The value of 200 can be dynamically adjusted in our result figures using the provided online versions of the figures.
+Choosing 200 as the minimum evaluation class size reduces the number of effective classes to $k''=37$ which has little effect on the normalized entropy which raises to $\hat{H}=.85.$
+As one can experience in the online version of the figures the impact on the choice of the minimum class size is insignificant.
+
+We considered a weighted evaluation metric that considers primary MSC labels that are only 'slightly wrong' as partially correct.
+However, a reasonable definition of 'slightly wrong' turns out to be difficult as the question which other primary MSC classes would be acceptable is highly opinionated.
 
 \subsection{Encoding of the input data}
 
@@ -63,7 +101,7 @@ For our encodings, we prepared the following sources:
 
 
 Each of these sources was encoded and classified separately.
-\subsection{Clustering}
+
 
 We encoded our sources using the 'TfidfVectorizer' of the python package Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}}. We used 'utf-8' encoding, and did not perform accent striping or other character normalization except lowercasing. Furthermore, we used the 'word' analyzer without custom stopword list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation. The resulting vectors consist of float64 entries with 'l2' norm unit output rows.
 
@@ -72,10 +110,10 @@ We encoded our sources using the 'TfidfVectorizer' of the python package Scikit-
 Our encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.
 
 We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn. We employed the 'l2' penalty norm with 1e-4 ($10^-4$) tolerance stopping criterion and 1.0 regularization. Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed. We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations.
-\subsection{Reproducibility}
-\url{https://mathscinet.ams.org/mathscinet-getitem?mr=3444005}
+%\subsection{Reproducibility}
+%\url{https://mathscinet.ams.org/mathscinet-getitem?mr=3444005}
 
-\section{Evaluation}\label{sec:eval}
+\section{Evaluation and Discussion}\label{sec:eval}
 
 \subsection{pre-Evaluation}
 
