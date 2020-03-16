@@ -5,7 +5,7 @@ zbMATH classified more than
 With more than
 \href{https://msc2020.org}%
 {5000} class labels, this classification task requires significant depth-knowledge of the particular fields of mathematics in order to obtain correct fine-grained classifications of the articles.
-Therefore the classification is two-fold.
+Therefore the classification procedure is two-fold.
 At first, the articles are pre-classified into one of \href{https://msc2020.org}%
 {63} main classifications, which are the two first digits of the first MSC label of each article.
 In a second step, domain expert assigns fine-grained classification labels in their area of expertise.
@@ -14,7 +14,7 @@ In this paper, we focus on the coarse-grained classification and explore how mod
 In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
 We formulate the following research questions:
 \begin{enumerate}
-  \item Which measures are appropriate to measure the quality of automatic classifications?
+  \item Which measures are appropriate to assess the quality of automatic classifications?
   \item Does the inclusion of mathematical formulae improve the quality of the classifications?
   \item Does the Part of Speech (POS) preprocessing improve the quality of classifications?
   \item Which features (Title, Abstract, References) are most important for the correct classification?
@@ -25,7 +25,24 @@ We formulate the following research questions:
 \section{Method}\label{sec:method}
 To investiagte the given problem, we first create a test and training dataset, second we investage different encodings, train our models and evaluate the results.
 \subsection{Generation of a test and training dataset}
+\paragraph{Filter current high quality articles}
+The zbMATH database has assiged MSC classes to more than
+\href{https://zbmath.org/?q=cc%3A*}%
+{3.6M} articles.
+However, the way how mathematical articles are written changed in the last century.
+Therefore, we did focus on recent articles from the years 2000 to 2019 and limited ourseles to selected yournals.
+Moreover, we restricted ourselves to articles in english and limited ourselfes to abstracts rather than reviews of articles.
+To be able to compare methods that are based on references and methods that use text and title we only selected articles that have one reference that
+can be matched to another article.
+In addition we excluded articles that are not finally published and processed and thus do not yet have a zbl-number.
+\paragraph{Splitting to test and training set}
+After applying all these filters, we split the resulting list of 442'382 articles into a test and training set.
+For the test set it was important to us that we can also measure the bias of our zbMATH classification labels.
+Therefore, we used the articles of which we knew the classification by the MR service as training set.
+The resulting training set consists of 32'230 articles and the training set of 410'152 articles.
+To ensure that these selection does not introduce additional bias, we did also compute standard 10 fold cross validation.
 \subsection{Definition of evaluation metrics}
+
 \subsection{Encoding of the input data}
 
 
