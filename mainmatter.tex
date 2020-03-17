@@ -23,6 +23,10 @@ We formulate the following research questions:
   \item How can the best performing method be integrated into the current production pipeline at zbMATH?
 \end{enumerate}
 \section{Method}\label{sec:method}
+\smartdiagramset{back arrow disabled=true}
+  \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
+
+
 To investiagte the given problem, we first create a test and training dataset, second we investage different encodings, train our models and evaluate the results.
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles}
@@ -46,15 +50,27 @@ To maximize rerproducibility, we created a dedicated dataset from these articles
 However, currently legal restrictions apply and the dataset can not yet provided for anonymous download at this date.
 For each of the 442'382 articles in the dataset has the following fields
 \begin{description}
-  \item[de] An eight digit id of the document.
+  \item[de*] An eight digit id of the document.
+  \item[labels*] Actual MSC labels.
   \item[title] The english title of the document, with LaTeX macros for mathematical symbols~\cite{Schubotz2019b}.
   \item[text] The text of the abstract with LaTeX macros.
   \item[mscs] A comma seperated list of MSC labels generated from the references. For each reference in the document we look up the MSC labels of the reference. For example, if document has 3 reference $A,B,C$ that are also in the also documents in zbMATH and the MSC labels of $A,B,C$ are $a_1$ and $a_2$, $b_1$, and $c_1-c_3$ the field mscs reads $a_1  a_2, b_1, c_1 c_2 c_3.$
 \end{description}
-No additional data is provided and the field DE must not be used for training.
+*) The field de and labels must by any method as input to the classification algorithm.
+These 6 fields were provided as CSV files to the algorithms.
+After training we expect the algorithm to return the following fields in CSV format:
+\begin{description}
+  \item[de (integer)] Eight digit ID of the document.
+  \item[method* (char(5))] Five letter ID of the run.
+  \item[pos (integer)] Position in the result list. For the current multiclass classification problem always 1.
+  \item[coarse (integer)] coarse grained MSC class.
+  \item[fine (char(5), optional)] Fine grained MSC classification.
+  \item[score (numeric, optional)] Self-confidence of the algorithm about the result. 
+\end{description}
+We enforce that the fields de, method and pos form a primary key, i.e., there can not be two entries in the result with the same combination of these values.
 \subsection{Definition of evaluation metrics}
-While the assignment of all MSC labels to each article is a multi label classification task the assignment of the primary coarse grained MSC, which we investigate in this paper is a multiclass classfication problem.
-With $k=63$ classes the probablity of randomly chosing the correct class of size $c_i$ is rather low
+While the assignment of all MSC labels to each article is a multi label classification task the assignment of the primary coarse grained MSC, which we investigate in this paper is a multi-class classification problem.
+With $k=63$ classes the probability of randomly choosing the correct class of size $c_i$ is rather low
 \(
 P_i=\frac{c_i}{n}
 \)
@@ -80,114 +96,185 @@ As one can experience in the online version of the figures the impact on the cho
 
 We considered a weighted evaluation metric that considers primary MSC labels that are only 'slightly wrong' as partially correct.
 However, a reasonable definition of 'slightly wrong' turns out to be difficult as the question which other primary MSC classes would be acceptable is highly opinionated.
+\subsection{Selection of methods to evaluate}
 
-\subsection{Encoding of the input data}
 
-
-For our encodings, we prepared the following sources:
+In this paper, we compare 12 different methods to determine the primary coarse grained MSC label for the test dataset:
 
 \begin{description}
-  \item[titls] the titles of the publications.
-  \item[texts] the abstract texts of the publications
-  \item[refs] the reference mscs of the publications (space separated strings)
-  \item[tite] the titles and texts of the publications combined (strings concatenated)
-  \item[tiref]: the titles and reference mscs of the publications combined (strings concatenated)
-  \item[teref]: the abstract texts and reference mscs of the publications combined (strings concatenated)
-  \item[titer]: the titles, and abstract texts, and reference mscs of the publications combined (strings concatenated)
+  \item[zb1] We converted the actual labels from the MR-zb dataset to the evaluation data structure. Therefore we used a simple SQL statement that splits the current labels and inserts them to the evaluation table.
+% TODO: Put the dataset description to the repo
+%INSERT INTO msc_eval
+%SELECT de, 'zb1', a.nr pos, Cast(left(a.msc, 2) AS integer) course, a.msc fine
+%FROM "mrZbMsc" mr,
+%unnest(string_to_array(mr.zbmsc, ' ')) WITH ORDINALITY a(msc, nr);
+  \item[mr1] We performed the same steps as for zb1. However, MR uses additional brackets for the non primary MSC labels which we removed.
+%insert into msc_eval
+%SELECT de, 'mr1', a.nr pos, Cast(left(a.msc, 2) AS integer) course, a.msc fine
+%FROM "mrZbMsc" mr,
+%unnest(string_to_array(replace(replace(mr.mrmsc, '(', ' '), ')', ''), ' ')) WITH ORDINALITY a(msc, nr);
+
+  \item[titer] We combined the \texttt{title}, abstract \texttt{text}, and reference \texttt{mscs} of the articles via string concatenation.
+  We encoded this string sources using the 'TfidfVectorizer' of the python package Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}}. We did not alter the 'utf-8' encoding, and did not perform accent striping or other character normalization except lowercasing. Furthermore, we used the 'word' analyzer without custom stopword list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation. The resulting vectors consist of float64 entries with 'l2' norm unit output rows. This data was passed to Our encoder. The encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.  We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn. We employed the 'l2' penalty norm with $10^{-4}$ tolerance stopping criterion and 1.0 regularization. Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed. We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations. These choices were made based on a previous study where, we clustered arxiv articles.
+  %TODO cite scharpf2020
+  \item[refs*] Same as \texttt{titer}, but using only the \texttt{mscs} as input.
+  \item[titls*] Same as \texttt{titer}, but using only the \texttt{title} as input.
+  \item[texts*] Same as \texttt{titer}, but using only the \texttt{text} as input.
+  \item[ref1] We used a simple SQL script to suggest the most frequent primary MSC based on the \texttt{mscs} input. This method is currently used in production to estimate the primary MSC.
+%insert into msc_eval
+%SELECT mr.de, 'ref1' as method,  row_number()  OVER (
+%PARTITION BY mr.de
+%ORDER BY count(*) DESC) pos, Cast(left(a.msc, 2) AS integer) coarse
+%FROM "mrZbMsc" mr,
+%msc_refs u,
+%unnest(string_to_array(replace(mscs,',',''), ' ')) a(msc)
+%WHERE mr.de = u.de
+%GROUP BY mr.de, method, coarse;
+  \item[uT1] We adjusted the JAVA program posLingue~\cite{SchonebergS14} to read from the new training and test set. However, we did not perform new training and reused the model which was trained 2014. For this run, we did remove all mathematical formulae from the \texttt{title} and abstract \texttt{text} as a baseline.
+  \item[uM1] The same as uT1 but this time we keept the formulae. We did slightly adjust the formula detection mechanism as the way how formulae were written in zbMATH changed~\cite{Schubotz2019b}. This method is currently used in production for articles that do not have references with resolvable \texttt{mscs}.
+  \item[tite*] Same as \texttt{titer}, but without using the \texttt{mscs} as input.
+  \item[tiref*]: Same as \texttt{titer}, but without using the abstract \texttt{text} as input.
+  \item[teref*]: Same as \texttt{titer}, but without using the \texttt{title} as input.
 \end{description}
 
-
-
-
-
-Each of these sources was encoded and classified separately.
-
-
-We encoded our sources using the 'TfidfVectorizer' of the python package Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}}. We used 'utf-8' encoding, and did not perform accent striping or other character normalization except lowercasing. Furthermore, we used the 'word' analyzer without custom stopword list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation. The resulting vectors consist of float64 entries with 'l2' norm unit output rows.
-
-
-
-Our encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.
-
-We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn. We employed the 'l2' penalty norm with 1e-4 ($10^-4$) tolerance stopping criterion and 1.0 regularization. Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed. We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations.
-%\subsection{Reproducibility}
-%\url{https://mathscinet.ams.org/mathscinet-getitem?mr=3444005}
-
+*)Each of these sources was encoded and classified separately.
 \section{Evaluation and Discussion}\label{sec:eval}
+\begin{table*}
+  \hfil
+  \begin{tabular}{llll}
+    \toprule
+    {} &      p &      r &      f \\
+    \midrule
+    zb1   &      1 &      1 &      1 \\
+    mr1   &  0.814 &  0.814 &  0.812 \\
+    titer &  0.772 &  0.778 &  0.773 \\
+    refs  &  0.748 &  0.753 &  0.746 \\
+    titls &  0.637 &  0.627 &  0.623 \\
+    texts &  0.699 &  0.709 &  0.699 \\
+    ref1  &  0.693 &  0.648 &  0.652 \\
+    uT1   &  0.656 &  0.642 &  0.645 \\
+    uM1   &  0.655 &  0.639 &  0.644 \\
+    tiref &   0.76 &  0.764 &   0.76 \\
+    teref &  0.769 &  0.774 &   0.77 \\
+    tite  &  0.713 &  0.722 &  0.713 \\
+    \bottomrule
+  \end{tabular}
+\hfil
+  \begin{tabular}{llll}
+    \toprule
+    {} &      p &      r &      f \\
+    \midrule
+    zb1   &  0.817 &  0.807 &   0.81 \\
+    mr1   &      1 &      1 &      1 \\
+    titer &  0.776 &  0.775 &  0.772 \\
+    refs  &  0.743 &  0.743 &  0.737 \\
+    titls &  0.644 &  0.632 &  0.627 \\
+    texts &  0.704 &  0.709 &  0.699 \\
+    ref1  &  0.693 &  0.646 &  0.652 \\
+    uT1   &  0.653 &  0.636 &  0.639 \\
+    uM1   &  0.652 &  0.632 &  0.636 \\
+    tiref &  0.762 &  0.761 &  0.758 \\
+    teref &  0.771 &   0.77 &  0.767 \\
+    tite  &   0.72 &  0.724 &  0.715 \\
+    \bottomrule
+  \end{tabular}
+\hfil
+  \caption{Precision $p$, recall $r$ and $F_1$-measure $f$ with regard to the baseline \texttt{zb1} (left) and \texttt{mr1} (right).} \label{tb1}
+\end{table*}
+After executing all the methods described in the former section, we did calculate the micro average of precision $p$, recall $r$ and $F_1$ score $f$ for each method, cf. Table~\ref{tb1}.
+Overall the results are similar if we use zbMATH or MR as a baseline for the results.
+Therefore, we will use zbMATH as reference for the remainder of the paper.
+More data, including all numbers with MR as reference is available from
+\url{https://automsceval.formulasearchengine.com}.
+%The graphics on that page are interactive, to allow investigation of specific msc classes and selection of new comparisons.
 
-\subsection{pre-Evaluation}
-
-\begin{figure}[h]
+\subsection{Effect of mathematical expressions}
+\begin{figure}[ht]
   \centering
   \includegraphics[width=1.1\textwidth]{mathEncoding.png}
-  \caption{Effect of mathematical symbols on the encoding.}
+  \caption{Effect of mathematical symbols on the encoding. The left bar denotes {\texttt{uT1}} and the right bar {\texttt{uM1}}. }\label{fgMath}
 \end{figure}
+By excluding, i.e, deleting, all mathematical expressions in method \texttt{uT1} in contrast to \texttt{uM1} we have a direct information about the impact of mathematical expression.
+We see that the overall $F_1$ score without mathematical expressions $f_\mathrm{uT1}=64.5\%$ in slightly higher than the score with mathematical expressions $f_\mathrm{uM1}=64.4\%.$ 
+Here, the main effect is the increased recall from $63.9\%$ to $64.2\%.$
+Also a class-wise investigation shows that for most classes the \texttt{uT1} outperforms \texttt{uM1}, cf., Figure \ref{fgMath}.
+Exceptions are classes 46 and 17 where the inclusion of math tags raises the $F_1$-score slightly.
 
-\begin{figure}[h]
+\subsection{Effect of POS tagging}
+\begin{figure}[hb]
   \centering
   \includegraphics[width=1.1\textwidth]{POSeffekt.png}
-  \caption{Effect of POS tagging symbols on the encoding.}
+  \caption{Effect of POS tagging symbols on the encoding.}\label{fgPOS}
 \end{figure}
+We evaluated the effect of the POS tagging, by comparing \texttt{tite} with \texttt{uM1}. \texttt{tite} ($f_\mathrm{teref}=71.3\%$) clearly outperforms \texttt{uM1} ($f_\mathrm{uM1}=64\%$). This is true for all MSC classes, cf. Figure~\ref{fgPOS}. We modified posLingo to output the POS tagged text and used this text as input to the scikit learn classifier. This did not improve the results.
 
-\begin{figure}[h]
+\subsection{Impact of title, abstract and references}
+The combined method \texttt{titer} $f_\mathrm{titer}=77.3\%$ is significantly better than methods that omit a feature.
+The best performing single feature method is \texttt{refs} $f_\mathrm{refs}=74.6\%$) followed by \texttt{text} $f_\mathrm{text}=69.9\%$ and \texttt{titls} $f_\mathrm{titls}=62.3\%$.
+Thus generting the msc from the references is an important stategy which can also be seen by comparing the score for the two combinations of features (\texttt{tiref} $f_\mathrm{text}=76\%$ and \texttt{teref} $f_\mathrm{text}=77\%$ vs \texttt{tite} $f_\mathrm{text}=71.3\%$).
+However, the naive reference based method \texttt{ref1} $f_\mathrm{text}=65.2\%$ that is currently used in production, is worse than just using \texttt{tite} without references.
+Thus training a machine learning algorithm that weights all information from the fine grained MSCs is clearly better than the majority vote of the references.
+
+
+\subsection{Comparison to a human baseline}
+\begin{figure}[ht]
   \centering
   \includegraphics[width=1.1\textwidth]{overview1.png}
   \includegraphics[width=1.1\textwidth]{overview2.png}
-  \caption{$F_1$ score of the classification quality of the methods mr1, titer, ref, titls, text grouped by MSC. We use the zbMATH primary MSC as baseline. MSC classes with less than 200 samples were omitted. An interactive version of the figure is available from \url{automsceval.formulasearchengine.com}.}
+  \caption{$F_1$ score of the classification quality of the methods mr1, titer, ref, titls, text grouped by MSC. We use the zbMATH primary MSC as baseline. MSC classes with less than 200 samples were omitted. An interactive version of the figure is available from \url{automsceval.formulasearchengine.com}.}\label{fgHum}
 \end{figure}
+Even the best performing machine learning algorithm \texttt{titer} $f_\mathrm{titer}=77.3\%$ is worth than using the classification by human experts from the other reviewing service MR \texttt{mr1} $f_\mathrm{mr1}=81.2\%.$ 
+However, there is no basis to define which primary MSC label either from MR or zbMATH is truly correct.
+The assignment of a two digit label to a mathematical research paper that in most cases touches different aspects of mathematics can not in all cases be classified into one of the classes.
+While for some classes such as 20 the agreement is $89.1\%$ for other classes such as 82 is only $47.6\%$ regarding the $F_1$ score, cf., Figure \ref{fgHum}.
+
+\subsection{Common false classifications}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.1\textwidth]{confusion.png}
+  \caption{Confusion matrix \texttt{titer}.}\label{fgConfusion}
+\end{figure}
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+    \includegraphics[width=0.48\textwidth]{webFrontend.png}
+  \end{center}
+  \caption{Simple frontend to \url{https://automscbackend.formulasearchengine.com}.}\label{fgScreenshot}
+\end{wrapfigure}
+After having discussed the pros and cons of the various methods, we now discuss how the currently best performing method \texttt{titer} can be improved. 
+One standard tool to analyze false classifications is a confusion matrix, cf., Figure \ref{fgConfusion}.
+Off-diagonal elements of this matrix indicate that two classes are often mixed by the classification algorithm.
+The x axis shows the true labels, where the y axis shows the predicted labels.
+The most frequent error of titer was that 86 was classified as 5.
+Moreover, 81 and 83 are mixed up often.
 
 
-\begin{table*}
-\begin{tabular}{llll}
-  \toprule
-  {} &      p &      r &      f \\
-  \midrule
-  zb1   &      1 &      1 &      1 \\
-  mr1   &  0.814 &  0.814 &  0.812 \\
-  titer &  0.772 &  0.778 &  0.773 \\
-  refs  &  0.748 &  0.753 &  0.746 \\
-  titls &  0.637 &  0.627 &  0.623 \\
-  texts &  0.699 &  0.709 &  0.699 \\
-  ref1  &  0.693 &  0.648 &  0.652 \\
-  uT1   &  0.656 &  0.642 &  0.645 \\
-  uM1   &  0.655 &  0.639 &  0.644 \\
-  tiref &   0.76 &  0.764 &   0.76 \\
-  teref &  0.769 &  0.774 &   0.77 \\
-  tite  &  0.713 &  0.722 &  0.713 \\
-  \bottomrule
-\end{tabular}
-\begin{tabular}{llll}
-  \toprule
-  {} &      p &      r &      f \\
-  \midrule
-  zb1   &  0.817 &  0.807 &   0.81 \\
-  mr1   &      1 &      1 &      1 \\
-  titer &  0.776 &  0.775 &  0.772 \\
-  refs  &  0.743 &  0.743 &  0.737 \\
-  titls &  0.644 &  0.632 &  0.627 \\
-  texts &  0.704 &  0.709 &  0.699 \\
-  ref1  &  0.693 &  0.646 &  0.652 \\
-  uT1   &  0.653 &  0.636 &  0.639 \\
-  uM1   &  0.652 &  0.632 &  0.636 \\
-  tiref &  0.762 &  0.761 &  0.758 \\
-  teref &  0.771 &   0.77 &  0.767 \\
-  tite  &   0.72 &  0.724 &  0.715 \\
-  \bottomrule
-\end{tabular}
-\caption{Precision $p$, recall $r$ and $F_1$-measure $f$ with regard to the baseline zb1 (left) and mr1 (right).}
-\end{table*}
+However, in general the numbers are small and there is no immediate action that one could do to avoid special cases of misclassification that do not involve a human expert.
 
+\subsection{Applying the research results in zbMATH}
+Since \texttt{titer} outperforms both text-based and reference based methods currently used in zbMATH we decided to develop a restful API which wraps our trained model into a service.
+We use pythons fastAPI under uvicorn to handle a higher loads.
+Our system is available as a docker container and can thus be scaled on demand.
+To simplify development and testing we provide a static HTML page as micro UI.
+This UI displays not only the most likely primary MSC but also less likely MSC classes.
+We guess that this would support human experts, if the most likely MSC seems inappropriate.
+The result is displyed as a pie-chart, cf., Figure \ref{fgScreenshot}
+To use the system in practice an interface to the citation matching component of zbMATH would be desired to paste the actual references rather than the mscs extracted from the references.
+Moreover, looking at the precision recall curve (Figure \ref{fgPR}) for \texttt{titer}, suggests that one can also select a threshold to decide of a articles are classified manually or automatically by the machine.
+For instance if one requires a precision that is as high as the precision of the other human classification by MR one would need to only consider suggestions with a score of $>0.5$ (the biggest part of the pie chart is more than half). This would automatically classify $86.2\%$ of the annually 80k articles and thus reduce the number of articles that human needs to look at drastically without a loss of classification quality.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{confusion.png}
-  \caption{Confusion matrix (titer).}
+  \includegraphics[width=1.1\textwidth]{prcurve.png}
+  \caption{Precision recall curve \texttt{titer}.}\label{fgPR}
 \end{figure}
+This is something we might develop in the future.
+  
+
 
 \section{Conclusion \& Future Work}\label{sec.concl}
 Regarding the research questions, we summarize our findings as follows:
 \begin{enumerate}
-  \item The quality of the classification for the coarse grained primary MSC can be evaluated with classical information retrieval methods such as precision, recall and accuracy. The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account. We therefore introduced a non-strict evaluation measure that also counts non-primary MSCs as correct.
+  \item The quality of the classification for the coarse grained primary MSC can be evaluated with classical information retrieval methods such as precision, recall and accuracy. The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account. However, we could not agree on an automated non-strict evaluation measure. Overall, we see that the $F_1$ score matches the perceived quality of the results and we do not see a need to invent further evaluation methods at this point in time.
   \item We did not find evidence that mathematical expressions improve the coarse grained primary classification.
   \item We found that modern NN such as Bert outperform the POS tagging based model developed by \cite{SchonebergS14}. mathematical expressions improve the coarse grained primary classification.
   \item For most classes the reference based approach outperformed the POS tagged based approach.
