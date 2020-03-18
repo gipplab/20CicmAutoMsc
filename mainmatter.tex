@@ -8,7 +8,7 @@ With more than
 Therefore the classification procedure is two-fold.
 At first, the articles are pre-classified into one of \href{https://msc2020.org}%
 {63} main classifications, which are the two first digits of the first MSC label of each article.
-In a second step, domain expert assigns fine-grained classification labels in their area of expertise.
+In a second step, domain expert assign fine-grained classification labels in their area of expertise.
 
 In this paper, we focus on the coarse-grained classification and explore how modern machine learning technology can be employed to automate this process.
 In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
@@ -17,7 +17,7 @@ We formulate the following research questions:
   \item Which measures are appropriate to assess the quality of automatic classifications?
   \item Does the inclusion of mathematical formulae improve the quality of the classifications?
   \item Does the Part of Speech (POS) preprocessing improve the quality of classifications?
-  \item Which features (Title, Abstract, References) are most important for the correct classification?
+  \item Which features (title, abstract, references) are most important for the correct classification?
   \item How does the quality of automatic classification compare to manual classifications?
   \item How to avoid misclassifications in the future?
   \item How can the best performing method be integrated into the current production pipeline at zbMATH?
@@ -27,38 +27,39 @@ We formulate the following research questions:
   \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
 
 
-To investiagte the given problem, we first create a test and training dataset, second we investage different encodings, train our models and evaluate the results.
+To investigate the given problem, we first create a test and training dataset.
+Second we investage different encodings, train our models and evaluate the results.
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles}
 The zbMATH database has assiged MSC classes to more than
 \href{https://zbmath.org/?q=cc%3A*}%
-{3.6M} articles.
+{3.6 M} articles.
 However, the way how mathematical articles are written changed in the last century.
-Therefore, we did focus on recent articles from the years 2000 to 2019 and limited ourseles to selected yournals.
-Moreover, we restricted ourselves to articles in english and limited ourselfes to abstracts rather than reviews of articles.
-To be able to compare methods that are based on references and methods that use text and title we only selected articles that have one reference that
+Therefore, we focussed on recent articles from the years 2000 to 2019 and considered only selected journals.
+Moreover, we restricted the article selection to articles in English and limited ourselfes to abstracts rather than reviews of articles.
+To be able to compare methods that are based on references and methods that use text and title, we only selected articles that have one reference that
 can be matched to another article.
-In addition we excluded articles that are not finally published and processed and thus do not yet have a zbl-number.
+In addition, we excluded articles that are not finally published and processed and thus do not yet have a zbl-number.
 \paragraph{Splitting to test and training set}
 After applying all these filters, we split the resulting list of 442'382 articles into a test and training set.
 For the test set it was important to us that we can also measure the bias of our zbMATH classification labels.
-Therefore, we used the articles of which we knew the classification by the MR service as training set.
-The resulting training set consists of $n=32'230$ articles and the training set of 410'152 articles.
-To ensure that these selection does not introduce additional bias, we did also compute standard 10 fold cross validation.
+Therefore, we used the articles of, which we knew the classification labels by the MR service as training set.
+The resulting test set consists of $n=32'230$ articles and the training set of 410'152 articles.
+To ensure that this selection does not introduce additional bias, we did also compute standard ten-fold cross validation.
 \paragraph{Definition of article data format}
-To maximize rerproducibility, we created a dedicated dataset from these articles which we aim to share with other researchers.
-However, currently legal restrictions apply and the dataset can not yet provided for anonymous download at this date.
-For each of the 442'382 articles in the dataset has the following fields
+To maximize reproducibility, we created a dedicated dataset from our article selection, which we aim to share with other researchers.
+However, currently legal restrictions apply and the dataset can not yet be provided for anonymous download at this date.
+Each of the 442'382 articles in the dataset has the following fields:
 \begin{description}
   \item[de*] An eight digit id of the document.
   \item[labels*] Actual MSC labels.
-  \item[title] The english title of the document, with LaTeX macros for mathematical symbols~\cite{Schubotz2019b}.
+  \item[title] The English title of the document, with LaTeX macros for mathematical symbols~\cite{Schubotz2019b}.
   \item[text] The text of the abstract with LaTeX macros.
-  \item[mscs] A comma seperated list of MSC labels generated from the references. For each reference in the document we look up the MSC labels of the reference. For example, if document has 3 reference $A,B,C$ that are also in the also documents in zbMATH and the MSC labels of $A,B,C$ are $a_1$ and $a_2$, $b_1$, and $c_1-c_3$ the field mscs reads $a_1  a_2, b_1, c_1 c_2 c_3.$
+  \item[mscs] A comma seperated list of MSC labels generated from the references. For each reference in the document we look up the MSC labels of the reference. For example, if document has 3 references $A,B,C$ that are also in the also documents in zbMATH and the MSC labels of $A,B,C$ are $a_1$ and $a_2$, $b_1$, and $c_1-c_3$ the field mscs reads $a_1  a_2, b_1, c_1 c_2 c_3.$
 \end{description}
-*) The field de and labels must by any method as input to the classification algorithm.
+*) The field \texttt{de} and \texttt{labels} must not be used as input to the classification algorithm.
 These 6 fields were provided as CSV files to the algorithms.
-After training we expect the algorithm to return the following fields in CSV format:
+After training we require each algorithm to return the following fields in CSV format:
 \begin{description}
   \item[de (integer)] Eight digit ID of the document.
   \item[method* (char(5))] Five letter ID of the run.
@@ -67,10 +68,10 @@ After training we expect the algorithm to return the following fields in CSV for
   \item[fine (char(5), optional)] Fine grained MSC classification.
   \item[score (numeric, optional)] Self-confidence of the algorithm about the result. 
 \end{description}
-We enforce that the fields de, method and pos form a primary key, i.e., there can not be two entries in the result with the same combination of these values.
+We enforce that the fields \texttt{de}, \texttt{method} and \texttt{pos} form a primary key, i.e., there can not be two entries in the result with the same combination of these values.
 \subsection{Definition of evaluation metrics}
-While the assignment of all MSC labels to each article is a multi label classification task the assignment of the primary coarse grained MSC, which we investigate in this paper is a multi-class classification problem.
-With $k=63$ classes the probability of randomly choosing the correct class of size $c_i$ is rather low
+While the assignment of all MSC labels to each article is a multi-label classification task, the assignment of the primary coarse grained MSC, which we investigate in this paper, is a multi-class classification problem.
+With $k=63$ classes, the probability of randomly choosing the correct class of size $c_i$ is rather low
 \(
 P_i=\frac{c_i}{n}
 \)
@@ -82,15 +83,15 @@ can be used to measure the imbalance \[
 \]
 by normalizing it to the maximum entropy $\log k'.$
 Here $k>k'=62$ are all classes in the test dataset which have at least one item. 
-In the test dataset no entries for the MSC class 97 were included.
+In the test dataset, no entries for the MSC class 97 were included.
 
-To take into account the imbalance of the dataset, we use weighted versions of precision $p$, recall $r$ and the $F_1$ measure. In particular, $p$ is defined as \[
+To take into account the imbalance of the dataset, we use weighted versions of precision $p$, recall $r$ and the $F_1$ measure. In particular, $p$ is defined as \(
 \frac{\sum_{i=1}^{k}c_ip_i}{n}
-\] with the class precision $p_i$.
+\) with the class precision $p_i$.
 $r$ and $F_1$ are defined analog.
 
 Moreover, we eliminate the effect of classes with only few samples by disregarding all classes with less than 200 entries.
-The value of 200 can be dynamically adjusted in our result figures using the provided online versions of the figures.
+The value of 200 can be dynamically adjusted in our result figures, using the provided online versions of the figures.
 Choosing 200 as the minimum evaluation class size reduces the number of effective classes to $k''=37$ which has little effect on the normalized entropy which raises to $\hat{H}=.85.$
 As one can experience in the online version of the figures the impact on the choice of the minimum class size is insignificant.
 
