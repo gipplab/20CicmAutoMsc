@@ -220,9 +220,9 @@ Exceptions are pMSCn 46 (Functional analysis ) and 17 (Nonassociative rings and 
 
 We evaluated the effect of the \emph{part of speech tagging} (POS), by comparing \texttt{tite} with \texttt{uM1}. $f_\mathrm{tite}=.713$ clearly outperforms $f_\mathrm{uM1}=.64.$ This is true for all MSC subjects, cf. Figure~\ref{fgPOS}. We modified posLingo to output the POS tagged text and used this text as input and retrained scikit learn classifier \texttt{tite2}. This did not improve the results over \texttt{tite}.
 
-\subsection{Impact of title, abstract and references}
-%Klar machen dass hier neue methoden angewendet wurden
-The combined method \texttt{titer} $f_\mathrm{titer}=77.3\%$ is significantly better than methods that omit a feature.
+\subsection{Effect of features and Impact of title, abstract and references}
+The newly developed method combined method~\cite{Scharpf2020} works best in a combined approach that uses title, abstract text and references \texttt{titer} $f_\mathrm{titer}=77.3\%.$
+This method is significantly better than methods that omit a feature.
 The best performing single feature method is \texttt{refs} $f_\mathrm{refs}=74.6\%$) followed by \texttt{text} $f_\mathrm{text}=69.9\%$ and \texttt{titls} $f_\mathrm{titls}=62.3\%$.
 Thus generating the MSC subject from the references is an important stategy which can also be seen by comparing the score for the two combinations of features (\texttt{tiref} $f_\mathrm{text}=76\%$ and \texttt{teref} $f_\mathrm{text}=77\%$ vs \texttt{tite} $f_\mathrm{text}=71.3\%$).
 However, the naive reference based method \texttt{ref1} $f_\mathrm{text}=65.2\%$ that is currently used in production, is worse than just using \texttt{tite} without references.
