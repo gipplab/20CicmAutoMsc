@@ -152,7 +152,7 @@ In this paper, we compare 12 different methods to determine the primary MSC subj
 
 \footnotetext{Each of these sources was encoded and classified separately.}
 \section{Evaluation and Discussion}\label{sec:eval}
-\begin{table*}
+\begin{table*}[t]
   \hfil
   \begin{tabular}{llll}
     \toprule
@@ -203,13 +203,13 @@ More data, including all numbers with MR as reference is available from
 \url{https://automsceval.formulasearchengine.com}.
 %The graphics on that page are interactive, to allow investigation of specific msc codes and selection of new comparisons.
 
-\subsection{Effect of mathematical expressions and part-of-speech tags}
+\paragraph{Effect of mathematical expressions and part-of-speech tags}
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1.1\textwidth]{mathEncoding.png}
+  \includegraphics[width=\textwidth]{mathEncoding.png}
   \caption{Mathematical symbols in \texttt{title} and abstract \texttt{text} do not improve the classification quality. Method \texttt{uT1} =left bar; method \texttt{uM1}=right bar%TODO: change x axis label to pMSCn 
  }\label{fgMath}
-  \includegraphics[width=1.1\textwidth]{POSeffekt.png}
+  \includegraphics[width=\textwidth]{POSeffekt.png}
 \caption{Part-of-speech tagging for mathematics does not improve the classification quality. Method \texttt{uM1}=left bar, method \texttt{tite}=right bar.}\label{fgPOS}
 \end{figure}
 By filtering out all mathematical expressions in the current production method \texttt{uT1} in contrast to \texttt{uM1} we have direct information about the impact of mathematical expressions on the classification quality.
@@ -220,54 +220,49 @@ Exceptions are pMSCn 46 (Functional analysis ) and 17 (Nonassociative rings and 
 
 We evaluated the effect of the \emph{part of speech tagging} (POS), by comparing \texttt{tite} with \texttt{uM1}. $f_\mathrm{tite}=.713$ clearly outperforms $f_\mathrm{uM1}=.64.$ This is true for all MSC subjects, cf. Figure~\ref{fgPOS}. We modified posLingo to output the POS tagged text and used this text as input and retrained scikit learn classifier \texttt{tite2}. This did not improve the results over \texttt{tite}.
 
-\subsection{Effect of features and Impact of title, abstract and references}
-The newly developed method combined method~\cite{Scharpf2020} works best in a combined approach that uses title, abstract text and references \texttt{titer} $f_\mathrm{titer}=77.3\%.$
+\paragraph{Effect of features and human baseline}
+The newly developed method combined method~\cite{Scharpf2020} works best in a combined approach that uses \texttt{title}, abstract \texttt{text} and references \texttt{titer} $f_\mathrm{titer}=77.3\%.$
 This method is significantly better than methods that omit a feature.
 The best performing single feature method is \texttt{refs} $f_\mathrm{refs}=74.6\%$) followed by \texttt{text} $f_\mathrm{text}=69.9\%$ and \texttt{titls} $f_\mathrm{titls}=62.3\%$.
-Thus generating the MSC subject from the references is an important stategy which can also be seen by comparing the score for the two combinations of features (\texttt{tiref} $f_\mathrm{text}=76\%$ and \texttt{teref} $f_\mathrm{text}=77\%$ vs \texttt{tite} $f_\mathrm{text}=71.3\%$).
+Thus generating the MSC subject from the references is an important strategy which can also be seen by comparing the score for the two combinations of features (\texttt{tiref} $f_\mathrm{text}=76\%$ and \texttt{teref} $f_\mathrm{text}=77\%$ vs \texttt{tite} $f_\mathrm{text}=71.3\%$).
 However, the naive reference based method \texttt{ref1} $f_\mathrm{text}=65.2\%$ that is currently used in production, is worse than just using \texttt{tite} without references.
-Thus training a machine learning algorithm that weights all information from the fine grained MSC codes is clearly better than the majority vote of the references.
+Thus training a machine learning algorithm that weights all information from the fine grained MSC codes is clearly better than the majority vote of the references, cf. \ref{fgRefs}.
 
 
-\subsection{Comparison to a human baseline}
-\begin{figure}[ht]
+
+\begin{figure}[t]
   \centering
-  \includegraphics[width=1.1\textwidth]{overview1.png}
-  \includegraphics[width=1.1\textwidth]{overview2.png}
-  \caption{$F_1$ score of the classification quality of the methods mr1, titer, ref, titls, text grouped by MSC. We use the zbMATH primary MSC subjects as baseline. MSC subjects with less than 200 samples were omitted. An interactive version of the figure is available from \url{automsceval.formulasearchengine.com}.}\label{fgHum}
+  \includegraphics[width=1\textwidth]{ref1-refs.png}
+  \caption{Machine learning method (\texttt{refs}, left)  clearly outperforms current production (\texttt{ref1}, right) method using references as only source for classification.}\label{fgRefs}
+  \includegraphics[width=1\textwidth]{mr1-titer.png}
+  \caption{For many pMSCn the best automatic method (\texttt{titer}, right) gets close to the performance of the human baseline (\texttt{mr1} left)}\label{fgHum}
 \end{figure}
 Even the best performing machine learning algorithm, \texttt{titer} with $f_\mathrm{titer}=77.3\%$, is worth than using the classification by human experts from the other reviewing service MR \texttt{mr1} $f_\mathrm{mr1}=81.2\%.$ 
 However, there is no basis to define which primary MSC subject, either from MR or zbMATH, is truly correct.
 The assignment of a two digit label to a mathematical research paper that in most cases touches different aspects of mathematics, can not in all cases be classified into one of the classes.
 While for some classes such as 20, the agreement is $89.1\%$ for other classes such as 82, it is only $47.6\%$ regarding the $F_1$ score, cf., Figure \ref{fgHum}.
 
-\subsection{Common false classifications}
-\begin{figure*}[h]
+We also investigated the bias introduced by the non random selection of the training set.
+Performing ten fold cross validation on the entire dataset yields to a $f_\mathrm{titer,10}=.776$ with a standard deviation $\sigma_\mathrm{titer,10}=.002.$
+Thus the selection of test set does not introduce a significant bias.
+
+\begin{figure*}[t]
   \centering
   \includegraphics[width=.48\textwidth]{confusion.png}
   \includegraphics[width=0.48\textwidth]{webFrontend.png}
-  \caption{Confusion matrix \texttt{titer} (left); simple frontend available at
-    \url{https://automscbackend.formulasearchengine.com}.(right)}\label{fgScreenshot}\label{fgConfusion}
+  \caption{Confusion matrix \texttt{titer} (left); classification frontend (right)}\label{fgScreenshot}\label{fgConfusion}
 \end{figure*}
 After having discussed the pros and cons of the various methods, we now discuss how the currently best performing method, \texttt{titer}, can be improved. 
-One standard tool to analyze false classifications
-%misclassifications
-is a confusion matrix, cf., Figure \ref{fgConfusion}.
-%In this matrix, off-diagonal elements...
-Off-diagonal elements of this matrix indicate that two classes are often mixed by the classification algorithm.
+One standard tool to analyze misclassifications is a confusion matrix, cf., Figure \ref{fgConfusion}.
+In this matrix, off-diagonal elements of this matrix indicate that two classes are often mixed by the classification algorithm.
 The x axis shows the true labels, whereas the y axis shows the predicted labels.
 The most frequent error of \textit{titer} was that 68 (Computer science) was classified as 5 (Combinatorics).
-%msc 86 ...
-% bedeutungen in klammern
-Moreover, 81 and 83 are mixed up often.
-%msc 81 ...
-%tense inconsistency was/are
+Moreover, 81 (Quantum theory) and 83 (Relativity and gravitational theory) are mixed up often.
 
-However, in general the numbers
-% number of misclassifications
-are small and there is no immediate action that one could do to avoid special cases of misclassification that do not involve a human expert.
 
-\subsection{Applying the research results in zbMATH}
+However, in general the number of misclassifications are small and there is no immediate action that one could do to avoid special cases of misclassification that do not involve a human expert.
+
+
 Since \texttt{titer} outperforms both text-based and reference based methods currently used in zbMATH we decided to develop a restful API which wraps our trained model into a service.
 We use pythons fastAPI under unicorn to handle higher loads.
 %cite fastAPI and unicorn
@@ -275,19 +270,15 @@ Our system is available as a docker container and can thus be scaled on demand.
 %maybe cite docker - although I think it could be like citing python
 To simplify development and testing, we provide a static HTML page as micro UI.
 This UI displays not only the most likely primary MSC subjects but also less likely MSC subjects.
-We expect that this will support support human experts,
-if the most likely MSC subject seems inappropriate.
-The result is displayed as a pie-chart, cf., Figure \ref{fgScreenshot}
+We expect that this will support support human experts, if the most likely MSC subject seems inappropriate.
+The result is displayed as a pie-chart, cf., Figure \ref{fgScreenshot} from
+\url{https://automscbackend.formulasearchengine.com}.
 To use the system in practice, an interface to the citation matching component of zbMATH would be desired to paste the actual references rather than the MSC subjects extracted from the references.
-Moreover, looking at the precision recall curve (Figure \ref{fgPR}) for \texttt{titer}, suggests that one can also select a threshold to decide of a articles
-% of a articles?
-are classified manually or automatically by the machine.
-For instance, if one requires a precision that is as high as the precision of the other human classifications by MR, one would need to only consider suggestions with a score of $>0.5$ (the biggest
-%largest
-part of the pie chart is more than half). This would automatically classify $86.2\%$ of the annually 135k articles and thus reduce the number of articles that a human needs to look at drastically without a loss of classification quality.
-% drastically / significantly reduces the number of articles a human needs to look at ...
+Moreover, looking at the precision recall curve (Figure \ref{fgPR}) for \texttt{titer}, suggests that one can also select a threshold for falling back to manual classification.
+For instance, if one requires a precision that is as high as the precision of the other human classifications by MR, one would need to only consider suggestions with a score of $>0.5$. 
+This would automatically classify $86.2\%$ of the annually 135k articles and thus significantly reduce the number of articles that a human needs to look at without a loss of classification quality.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
   \includegraphics[width=.7\textwidth]{prcurve.png}
   \caption{Precision recall curve \texttt{titer}.}
@@ -300,24 +291,28 @@ This is something we might develop in the future.
 
 
 \section{Conclusion \& Future Work}\label{sec.concl}
-Regarding the research questions,
-%Returning to our RQs ...
-we summarize our findings as follows:
+Returning to our research questions, we summarize our findings as follows:
 \begin{enumerate}
-  \item The quality of the classification for the primary MSC subject can be evaluated with classical information retrieval methods such as precision, recall and accuracy.
-  %accuracy -> f1 score
-  The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account.
-  % what do you mean by "incorrect"?
-  However, we could not agree on an automated non-strict evaluation measure. Overall, we see that the $F_1$ score matches the perceived quality of the results and we do not see a need to invent further evaluation methods at this point in time.
-  \item We did not find evidence that mathematical expressions improve the coarse grained primary classification.
-  \item We found that modern NN such as Bert outperform the POS tagging based model developed by \cite{SchonebergS14}. Mathematical expressions improve the coarse grained primary classification.
-  \item For most classes, the reference based approach outperformed the POS tagged based approach.
-  \item The manual classification is significantly better for most classes. 
-  \item We consider our current model as good enough for the primary MSC subject pre classification task. We developed an open API which can be accessed from \url{https://automscbackend.formulasearchengine.com}.
+  \item The quality of the classification for the primary MSC subject can be evaluated with classical information retrieval methods such as precision, recall and $F_1$-score.
+%  The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account.
+%  % what do you mean by "incorrect"?
+%  However, we could not agree on an automated non-strict evaluation measure. Overall, we see that the $F_1$ score matches the perceived quality of the results and we do not see a need to invent further evaluation methods at this point in time.
+  \item In accordance with~\cite{Scharpf2020}, we did not find evidence that mathematical expressions improve pMSCn classification.
+  \item We found that modern machine learning methods do not benefit from the POS tagging based model developed by \cite{SchonebergS14}.
+  \item References have the highest prediction power, followed by abstract text and title.
+  \item The best performing method has an $F_1$ score of 77.2\%.
+  \item The manual classification is significantly better for most classes. However, the self reported score can be used to reduce the classification effort by 86.2\%, without a loss in classification quality.
 \end{enumerate}
-% the tense is sometimes mixed-up
 
-%overall, I like the paper very much!
+For the future, we plan to extend our work to full MSC codes.
+Moreover, we would like to be able to assign pMSCn to document sections, since we realize that some research just does not fit into one of the classes.
+Moreover, we will extend out field of application to other mathematical research artifacts such as blog posts, software, or dataset descriptions.
+As next step, we plan to also generate pMSCn from authors using the same methods we applied for references.
+We speculate that they will have a high impact on the classification as authors often publish in the same field.
+Here, we are connecting with our research efforts on affiliation disambiguation that can be used as fallback for junior authors without a long track record.
+Another extension is a better combination of the different features.
+Especially for the full MSC code research we will need to use different encoding for the MSC from references and authors.
+However, this new encoding requires more main memory for the model training and can not be done on a standard laptop.
 
 \paragraph{Acknowledgments} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
 The authors would like to express their gratitude to Felix Hamborg, and Terry Ruas for their advice in the most recent machine learning technology.
