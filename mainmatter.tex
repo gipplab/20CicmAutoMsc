@@ -42,7 +42,7 @@ In addition, we excluded articles that are not finally published and processed. 
 \paragraph{Splitting to test and training set:}
 After applying all these filters, we split the resulting list of 442'382 articles into a test and training set.
 For the test set we strive to measure the bias of our zbMATH classification labels.
-Therefore, we used the articles of, which we knew the classification labels by the MR service as training set.
+Therefore, we used the articles of, which we knew the classification labels by the MR service as training set from a previous research project~\cite{Bannister2018}.
 The resulting test set consists of $n=32'230$ articles and the training set of 410'152 articles.
 To ensure that this selection does not introduce additional bias, we did also compute standard ten-fold cross validation, cf. Section 3.
 \paragraph{Definition of article data format}
@@ -241,6 +241,7 @@ Even the best performing machine learning algorithm, \texttt{titer} with $f_\mat
 However, there is no basis to define which primary MSC subject, either from MR or zbMATH, is truly correct.
 The assignment of a two digit label to a mathematical research paper that in most cases touches different aspects of mathematics, can not in all cases be classified into one of the classes.
 While for some classes such as 20, the agreement is $89.1\%$ for other classes such as 82, it is only $47.6\%$ regarding the $F_1$ score, cf., Figure \ref{fgHum}.
+These differences reflect the intrinsic problem that mathematics can not be fully reflected by a hierarchical system, and the choices of both services reflect the emphasis on different facets of overarching research which often derives from differences in the reviewing culture.
 
 We also investigated the bias introduced by the non random selection of the training set.
 Performing ten fold cross validation on the entire dataset yields to a $f_\mathrm{titer,10}=.776$ with a standard deviation $\sigma_\mathrm{titer,10}=.002.$
