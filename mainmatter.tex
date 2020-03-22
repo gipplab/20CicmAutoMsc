@@ -205,11 +205,10 @@ In this paper, we compare 12 different methods for (automatically) determining t
   %in comparison to
   the baseline \texttt{zb1} (left) and \texttt{mr1} (right).} \label{tb1}
 \end{table*}
-After executing all the methods described in the former section, we did calculate the micro average of precision $p$, recall $r$ and $F_1$ score $f$ for each method, cf. Table~\ref{tb1}.
-Overall, the results are similar if we use zbMATH or MR as a baseline for the results.
-Therefore, we will use zbMATH as reference for the remainder of the paper.
-More data, including all numbers with MR as reference is available from
-\url{https://automsceval.formulasearchengine.com}.
+After executing each of the methods described in the previous section, we calculated the micro average of precision \(p\), recall \(r,\) and \(F_{1}\) score \(f\) for each method, cf. Table~\ref{tb1}.
+Overall, we find that results are similar whether we used zbMATH or MR as a baseline in our evaluation.
+Therefore, we will use zbMATH as the reference for the remainder of the paper. All data, including the test results using MR as the baseline is available from: \url{https://automsceval.formulasearchengine.com}.
+
 %The graphics on that page are interactive, to allow investigation of specific msc codes and selection of new comparisons.
 
 \paragraph{Effect of mathematical expressions and part-of-speech tags}
@@ -221,13 +220,16 @@ More data, including all numbers with MR as reference is available from
   \includegraphics[width=\textwidth]{POSeffekt.png}
 \caption{Part-of-speech tagging for mathematics does not improve the classification quality. Method \texttt{uM1}=left bar, method \texttt{tite}=right bar.}\label{fgPOS}
 \end{figure}
-By filtering out all mathematical expressions in the current production method \texttt{uT1} in contrast to \texttt{uM1} we have direct information about the impact of mathematical expressions on the classification quality.
-We see that the overall $F_1$ score without mathematical expressions $f_\mathrm{uT1}=64.5\%$ is slightly higher than the score with mathematical expressions $f_\mathrm{uM1}=64.4\%.$ 
-Here, the main effect is the increase of the recall from  $63.9\%$ to $64.2\%.$
-Also a class-wise investigation shows that for most classes, the \texttt{uT1} outperforms \texttt{uM1}, cf., Figure \ref{fgMath}.
-Exceptions are pMSCn 46 (Functional analysis ) and 17 (Nonassociative rings and algebras) where the inclusion of math tags raises the $F_1$-score slightly.
+By filtering out all mathematical expressions in the current production method \texttt{uT1} in contrast to \texttt{uM1} we could receive information on the impact of mathematical expressions on classification quality.
+We found that the overall \(F_{1}\) score without mathematical expressions \(f_{uT1} = 64.5\%\) is slightly higher than the score with mathematical expressions \(f_{uM1} = 64.4\%.\)
+Here, the main effect is an increase in recall from \(63.9\%\) to \(64.2\%.\)
+Additionally, a class-wise investigation showed that for most classes, \texttt{uT1} outperformed \texttt{uM1}, cf. Figure~\ref{fgMath}.
+Exceptions are pMSCn 46 (Functional analysis ) and 17 (Nonassociative rings and algebras) where the inclusion of math tags raised the \(F_{1}\)-score slightly.
 
-We evaluated the effect of the \emph{part of speech tagging} (POS), by comparing \texttt{tite} with \texttt{uM1}. $f_\mathrm{tite}=.713$ clearly outperforms $f_\mathrm{uM1}=.64.$ This is true for all MSC subjects, cf. Figure~\ref{fgPOS}. We modified posLingo to output the POS tagged text and used this text as input and retrained scikit learn classifier \texttt{tite2}. This did not improve the results over \texttt{tite}.
+e evaluated the effect of \emph{part of speech tagging} (POS), by comparing \texttt{tite} with \texttt{uM1}. \(f_{\text{tite}} = .713\) clearly outperformed \(f_{uM1} = .64.\)
+This held true for all MSC subjects, cf. Figure~\ref{fgPOS}.
+We modified posLingo to output the POS tagged text and used this text as input and retrained scikit learn classifier \texttt{tite2}.
+However, this method did not lead to better results than \texttt{tite}.
 
 \paragraph{Effect of features and human baseline}
 The newly developed method combined method~\cite{Scharpf2020} works best in a combined approach that uses \texttt{title}, abstract \texttt{text} and references \texttt{titer} $f_\mathrm{titer}=77.3\%.$
