@@ -1,24 +1,30 @@
 \section{Introduction}\label{sec:intro}
-zbMATH classified more than 135k articles in 2019 according to the Mathematics Subject Classification~(MSC)~\cite{Khnemund2016}.
-With more than
-\href{https://zbmath.org/classification/}%
-{6600} class labels, this classification task requires significant depth-knowledge of the particular fields of mathematics in order to obtain correct fine-grained MSC codes of the articles.
-Therefore the classification procedure is two-fold.
-At first, the articles are pre-classified into one of \href{https://msc2020.org}%
-{63} coarse-grained MSC subject numbers, which are the two first digits of the first MSC code of each article.
+zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified over 135k articles in the year 2019 using the Mathematics Subject Classification~(MSC)~\cite{Khnemund2016}.
+With more than \href{https://zbmath.org/classification/}{{6,600}} MSC codes, this classification task requires significant in-depth knowledge of various sub-fields of mathematics to determine the correct MSC codes of the articles.
+In summary, the classification procedure of zbMATH and MR is two-fold.
+First, articles are pre-classified into one of \href{https://msc2020.org}{{63}} coarse-grained MSC subject numbers, which are the two first digits of the first MSC code of each article.
 In a second step, subject editors assign fine-grained MSC codes in their area of expertise.
 
-In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how modern machine learning technology can be employed to automate this process.
+In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
 In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
 We formulate the following research questions:
+
 \begin{enumerate}
-  \item Which measures are best to assess the quality of classifications?
-  \item Do mathematical formulae improve the quality of the classifications?
-  \item Does the Part of Speech preprocessing improve the quality of classifications?
-  \item Which features are most important for the correct classification?
-  \item How does the currently best method perform?
-  \item How does this compare to a human baseline?
+  \def\labelenumi{\arabic{enumi}.}
+  \item
+  Which evaluation metrics are most useful to assess the classifications?
+  \item
+  Do mathematical formulae improve the classifications?
+  \item
+  Does Part of Speech preprocessing improve the accuracy of classifications?
+  \item
+  Which features are most important for the accurate classification?
+  \item
+  How well does the best automatic method currently perform?
+  \item
+  How does this method compare to a human baseline?
 \end{enumerate}
+
 \section{Method}\label{sec:method}
 \smartdiagramset{back arrow disabled=true}
   \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
