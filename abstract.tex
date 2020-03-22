@@ -1,5 +1,8 @@
-The Mathematics Subject Classification (MSC) labels publications in mathematics research and related sciences.
-Mathematical reviewing services such as zbMATH and Mathematical Reviews (MR) use the MSC to improve the discoverability of mathematical knowledge.
-Currently, the labeling is performed manually.
-In this paper, we investigate the ability to automatically perform a coarse-grained first-level primary classification of mathematical publications in zbMATH using state of the machine learning technology.
-We find that most advanced methods achieve $F_1$-scores of more than 77\%, which is remarkably close to the human baseline of 81\% (the agreement of zbMATH and MR).
+Authors of research papers in the fields of mathematics, and other math-heavy disciplines commonly employ the Mathematics Subject Classification (MSC) scheme to search for relevant literature.
+The MSC is a hierarchical alphanumerical classification scheme that allows librarians to specify one or multiple codes for publications.
+Digital Mathematical Libraries and reviewing services, such as zbMATH and Mathematical Reviews (MR) rely on these the MSC in their workflows to organize abstracts and reviews.
+Therefore the editors manually assign a coarse-grained classification that determines the subject editor, which then performs the fine-grained labeling.
+
+In this paper, we investigate the feasibility of automatically assigning a coarse-grained primary classification, by regarding the problem as a multi class classification machine learning task.
+We find that the most advanced methods achieve \(F_{1}\)-scores of over 77\%, which is remarkably close to the agreement of zbMATH and MR of 81\%.
+Moreover, we find that the methods confidence score allows us the reduce the manual coarse-grained classification effort to 14\% while maintaining a precision of 81\% for the automatically classified articles.
