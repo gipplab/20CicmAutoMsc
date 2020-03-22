@@ -30,85 +30,73 @@ We formulate the following research questions:
   \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
 
 
-To investigate the given problem, we first create a test and training dataset.
-Second we investigate different encodings, train our models and evaluate the results.
+To investigate the given problem, we first created test and training datasets.
+We then investigated the different pMSCn encodings, trained our models and evaluated the results.
+
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles:}
-The zbMATH database has assiged MSC codes to more than
-\href{https://zbmath.org/?q=cc%3A*}%
-{3.6 M} articles.
-However, the way how mathematical articles are written changed in the last century and the classification of historic articles is not something we aim to investigate in this article.
-The first MSC was created in 1990 and updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
-With each update automated rewrite rules are applied to map codes from the old MSC to the next MSC version, with is connected with a loss of accurancy of the class labels.
-To obain a coherent and high qualtiy dataset for training and testing, we focused on recent articles from the years 2000 to 2019 classified using the MCS verion 2010 and considered only selected journals.
-Moreover, we restricted the article selection to articles in English and limited ourselves to abstracts rather than reviews of articles.
-To be able to compare methods that are based on references and methods that use text and title, we only selected articles that have one reference that
-can be matched to another article.
-In addition, we excluded articles that are not finally published and processed. The list of articles is availible from our website: \url{https://automsceval.formulasearchengine.com}
+The zbMATH database has assiged MSC codes to more than \href{https://zbmath.org/?q=cc\%3A*}{3.6 M} articles.
+However, the way in which mathematical articles are written has changed over the last century, and the classification of historic articles is not something we aim to investigate in this article. The first MSC was created in 1990, and has since been updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
+With each update, automated rewrite rules are applied to map the codes from the old MSC to the next MSC version, which is connected with a loss of accurancy of the class labels.
+To obain a coherent and high quality dataset for training and testing, we focused on the recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals.
+Additionally, we restricted our selection to English articles and limited ourselves to abstracts rather than reviews of articles.
+To be able to compare methods that are based on references and methods using text and title, we only selected articles with at least one reference that could be matched to another article.
+In addition, we excluded articles that were not yet published and processed.
+The list of articles is available from our website: \url{https://automsceval.formulasearchengine.com}
 \paragraph{Splitting to test and training set:}
-After applying all these filters, we split the resulting list of 442'382 articles into a test and training set.
-For the test set we strive to measure the bias of our zbMATH classification labels.
-Therefore, we used the articles of, which we knew the classification labels by the MR service as training set from a previous research project~\cite{Bannister2018}.
-The resulting test set consists of $n=32'230$ articles and the training set of 410'152 articles.
-To ensure that this selection does not introduce additional bias, we did also compute standard ten-fold cross validation, cf. Section 3.
+After applying the filter criteria as mentioned above, we split the resulting list of 442,382 articles into test and training sets.
+For the test set, we aimed to measure the bias of our zbMATH classification labels.
+Therefore, we used the articles for which we knew the classification labels by the MR service as the training set from a previous research project~\cite{Bannister2018}.
+The resulting test set consisted of \(n = 32,230\) articles, and the training set contained 410,152 articles.
+To ensure that this selection does not introduce additional bias, we also computed the standard ten-fold cross validation, cf. Section 3.
 \paragraph{Definition of article data format}
-To maximize reproducibility, we created a dedicated dataset from our article selection, which we aim to share with other researchers.
+To allow for reproducibility, we created a dedicated dataset from our article selection, which we aim to share with other researchers.
 However, currently, legal restrictions apply and the dataset can not yet be provided for anonymous download at this date.
-Each of the 442'382 articles in the dataset has the following fields:
+Each of the 442,382 articles in the dataset contained the following fields:
 \begin{description}
-  \item[de] An eight digit ID of the document\footnotemark.
+  \item[de] An eight-digit ID of the document\footnotemark.
   \item[labels] Actual MSC codes\footnotemark[\value{footnote}].
-  \item[title] The English title of the document, with LaTeX macros for math~\cite{Schubotz2019b}.
+  \item[title] The English title of the document, with LaTeX macros for mathematical language~\cite{Schubotz2019b}.
   \item[text] The text of the abstract with LaTeX macros.
-  \item[mscs] A comma seperated list of MSC codes generated from the references.
+  \item[mscs] A comma separated list of MSC codes generated from the references.
 \end{description}
-\footnotetext{The field \texttt{de} and \texttt{labels} must not be used as input to the classification algorithm.}
-These 6 fields were provided as CSV files to the algorithms.
-Here, the \texttt{mscs} field was generated as follows: For each reference in the document we look up the MSC codes of the reference. For example, if document has 3 references $A,B,C$ that are also in the also documents in zbMATH and the MSC codes of $A,B,C$ are $a_1$ and $a_2$, $b_1$, and $c_1-c_3$ the field mscs reads $a_1  a_2, b_1, c_1 c_2 c_3.$
+\footnotetext{The fields \texttt{de} and \texttt{labels} must not be used as input to the classification algorithm.}
+These 6 fields were provided as CSV files to the algorithms. The \texttt{mscs} field was generated as follows: For each reference in the document, we looked up the MSC codes of the reference. For example, if a certain document contained the references \(A,B,\ C\) that are also in the documents in zbMATH and the MSC codes of \(A,B,C\) are \(a_{1}\) and \(a_{2}\), \(b_{1}\), and \(c_{1} - c_{3}\), respectively, then the field \texttt{mscs} will read \(a_{1}a_{2},b_{1},c_{1}c_{2}c_{3}.\)
 
-
-After training we require each algorithm to return the following fields in CSV format for the testset:
+After training, we required each of our tested algorithms to return the following fields in CSV format for the testset:
 \begin{description}
-  \item[de (integer)] Eight digit ID of the document.
-  \item[method (char(5))] Five letter ID of the run.
+  \item[de (integer)] Eight-digit ID of the document.
+  \item[method (char(5))] Five-letter ID of the run.
   \item[pos (integer)] Position in the result list.
   \item[coarse (integer)] Coarse-grained MSC subject number.
   \item[fine (char(5), optional)] Fine-grained MSC code.
-  \item[score (numeric, optional)] Self-confidence of the algorithm about the result. 
+  \item[score (numeric, optional)] Self-confidence of the algorithm about the result.
 \end{description}
-We enforce that the fields \texttt{de}, \texttt{method} and \texttt{pos} form a primary key, i.e., there can not be two entries in the result with the same combination of values.
-Note that for the current multiclass classification problem \texttt{pos} is always 1 as only the primary MSC subject number is considered.
+We ensured that the fields \texttt{de}, \texttt{method} and \texttt{pos} form a primary key, i.e., no two entries in the result can have the same combination of values.
+Note that for the current multiclass classification problem, \texttt{pos} is always 1, since only the primary MSC subject number is considered.
 \subsection{Definition of evaluation metrics}
-While the assignment of all MSC codes to each article is a multi-label classification task, the assignment of the primary MSC subject, which we investigate in this paper, is a multi-class classification problem.
-With $k=63$ classes, the probability of randomly choosing the correct class of size $c_i$ is rather low
-\(
-P_i=\frac{c_i}{n}
-\)
-Moreover, the dataset is not balanced. In particular the entropy \(
-H=-\sum_{i=1}^{k'}P_i\log P_i,
-\)
-can be used to measure the imbalance \(
-\hat{H}=\frac{H}{\log k}
-\)
-by normalizing it to the maximum entropy $\log k.$
+While the assignment of all MSC codes to each article is a multi-label classification task, the assignment of the primary MSC subject, which we investigate in this paper, is only a multi-class classification problem.
+With \(k = 63\) classes, the probability of randomly choosing the correct class of size \(c_{i}\) is rather low \(P_{i} = \frac{c_{i}}{n}.\)
+Moreover, the dataset is not balanced.
+In particular, the entropy \(
+H = - \sum_{i = 1}^{k}P_{i}\log P_{i},
+\) can be used to measure the imbalance \(\widehat{H} = \frac{H}{\log k}\) by normalizing it to the maximum entropy \(\log{k.}\)
 
-To take into account the imbalance of the dataset, we use weighted versions of precision $p$, recall $r$ and the $F_1$ measure. In particular, \(
-p=\frac{\sum_{i=1}^{k}c_ip_i}{n}
-\) with the class precision $p_i$.
-$r$ and $F_1$ are defined analog~\cite{SokolovaL09}.
+To take into account the imbalance of the dataset, we used weighted versions of precision \(p\), recall \(r,\) and the \(F_{1}\) measure \(f\).
+In particular, the precision \(p = \frac{\sum_{i = 1}^{k}c_{i}p_{i}}{n}\) with the class precision \(p_{i}\). \(r\) and \(F_{1}\) are defined analogously.
 
-In the testset, no entries for the pMSCn 97 (Mathematics education) were included, thus \[
-\hat{H}=\frac{H}{\log k}=\frac{3.44}{\log 62}=.83
-\]
+In the testset, no entries for the pMSCn 97 (Mathematics education) were included, thus
+
+\[\widehat{H} = \frac{H}{\log k} = \frac{3.44}{\log 62} = .83\]
+
 Moreover, we eliminate the effect of classes with only few samples by disregarding all classes with less than 200 entries.
 While pMSCn with few samples have little effect on the average metrics, the individual values are distracting in plots and data tables.
-Choosing 200 as the minimum evaluation class size reduces the number of effective classes to $k=37$ which has little effect on the normalized entropy which raises to $\hat{H}=.85.$
+Choosing 200 as the minimum evaluation class size reduces the number of effective classes to \(k = 37,\) which only has a minor effect on the normalized entropy as it is raised to \(\widehat{H} = .85.\)
 %Why do you leave out the 0. ?
 %--> to save space (I was aiming to this consistenctly throughout the paper, and also did this in previous papers.s)
-The value of 200 can be dynamically adjusted in our result figures, using the provided online versions of the figures.
-Also the individual values for $P_i$ that were used to calculate $H$ are given in the column \texttt{p} in the table on that page.
+The chosen value of 200 can be interactively adjusted in the dynamic result figures we made available online\footnote{\url{https://autoMSCeval.formulasearchengine.com}}.
+Additionally, the individual values for \(P_{i}\) that were used to calculate \(H\) are given in the column \texttt{p} in the table on that page.
 As one can experience in the online version of the figures, the impact on the choice of the minimum class size is insignificant.
-%experience -> explore
 
 %We considered a weighted evaluation metric that considers primary MSC subjects that are only 'slightly wrong' as partially correct.
 %% consider + considered -> take into account - for variation
@@ -116,7 +104,7 @@ As one can experience in the online version of the figures, the impact on the ch
 \subsection{Selection of methods to evaluate}
 
 
-In this paper, we compare 12 different methods to determine the primary MSC subject for the test dataset:
+In this paper, we compare 12 different methods for (automatically) determining the primary MSC subject in the test dataset:
 
 \begin{description}
     \item[zb1] Reference MSC subject numbers from zbMATH.
@@ -132,16 +120,28 @@ In this paper, we compare 12 different methods to determine the primary MSC subj
   %SELECT de, 'mr1', a.nr pos, Cast(left(a.msc, 2) AS integer) course, a.msc fine
   %FROM "mrZbMsc" mr,
   %unnest(string_to_array(replace(replace(mr.mrmsc, '(', ' '), ')', ''), ' ')) WITH ORDINALITY a(msc, nr);
-  \item[titer] According to recent research on the arXiv dataset~\cite{Scharpf2020}, we chose a machine learning method that has good trade-off between speed and performance. We combined the \texttt{title}, abstract \texttt{text}, and reference \texttt{mscs} of the articles via string concatenation.
-  We encoded this string sources using the 'TfidfVectorizer' of the python package Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}}. We did not alter the 'utf-8' encoding, and did not perform accent striping or other character normalization except lowercasing. Furthermore, we used the 'word' analyzer without custom stopword list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation. The resulting vectors consist of float64 entries with 'l2' norm unit output rows. This data was passed to Our encoder. The encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.  We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn. We employed the 'l2' penalty norm with $10^{-4}$ tolerance stopping criterion and 1.0 regularization. Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed. We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations. These choices were made based on a previous study where we clustered arxiv articles.
-  %TODO cite scharpf2020
+  \item[titer]
+  According to recent research performed on the arXiv dataset~\cite{Scharpf2020}, we chose a machine learning method with a good trade-off between speed and performance.
+  We combined the \texttt{title}, abstract \texttt{text}, and reference \texttt{mscs} of the articles via string concatenation.
+  We encoded these string sources using the 'TfidfVectorizer' of the Scikit-learn\footnote{\href{https://swmath.org/software/8058}{{https://swmath.org/software/8058}}~\cite{swSciKit}} python package.
+  We did not alter the 'utf-8' encoding, and did not perform accent striping, or other character normalization methods, with the exception of lowercasing.
+  Furthermore, we used the 'word' analyzer without a custom stop word list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation.
+  The resulting vectors consisted of float64 entries with `l2' norm unit output rows.
+  This data was passed to Our encoder.
+  The encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.
+  We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn.
+  We employed the 'l2' penalty norm with a \(10^{- 4}\) tolerance stopping criterion and a 1.0 regularization.
+  Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed.
+  We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations.
+  These choices were made based on a previous study in which we clustered arXiv articles.
   \item[refs] Same as \texttt{titer}, but using only the \texttt{mscs} as input\footnotemark.
   \item[titls] Same as \texttt{titer}, but using only the \texttt{title} as input\footnotemark[\value{footnote}].
   \item[texts] Same as \texttt{titer}, but using only the \texttt{text} as input\footnotemark[\value{footnote}].
   \item[tite] Same as \texttt{titer}, but without using the \texttt{mscs} as input\footnotemark[\value{footnote}].
   \item[tiref]: Same as \texttt{titer}, but without using the abstract \texttt{text} as input \footnotemark[\value{footnote}].
   \item[teref]: Same as \texttt{titer}, but without using the \texttt{title} as input\footnotemark[\value{footnote}].
-  \item[ref1] We used a simple SQL script to suggest the most frequent primary MSC subject based on the \texttt{mscs} input. This method is currently used in production to estimate the primary MSC subject.
+  \item[ref1] We used a simple SQL script to suggest the most frequent primary MSC subject based on the \texttt{mscs} input.
+  This method is currently used in production to estimate the primary MSC subject.
   %insert into msc_eval
   %SELECT mr.de, 'ref1' as method,  row_number()  OVER (
   %PARTITION BY mr.de
@@ -151,8 +151,11 @@ In this paper, we compare 12 different methods to determine the primary MSC subj
   %unnest(string_to_array(replace(mscs,',',''), ' ')) a(msc)
   %WHERE mr.de = u.de
   %GROUP BY mr.de, method, coarse;
-  \item[uT1] We adjusted the JAVA program posLingue~\cite{SchonebergS14} to read from the new training and test set. However, we did not perform new training and reused the model which was trained 2014. For this run, we did remove all mathematical formulae from the \texttt{title} and abstract \texttt{text} as a baseline.
-  \item[uM1] The same as uT1 but this time we kept the formulae. We did slightly adjust the formula detection mechanism as the way how formulae were written in zbMATH changed~\cite{Schubotz2019b}.
+  \item[uT1] 
+  We adjusted the JAVA program posLingue~\cite{SchonebergS14} to read from the new training and test sets. However, we did not perform a new training and instead reused the model that was trained in 2014. However, for this run, we removed all mathematical formulae from the \texttt{title} and the abstract \texttt{text} to generate a baseline.
+  \item[uM1]
+  The same as uT1 but in this instance, we included the formulae.
+  We slightly adjusted the formula detection mechanism, since the way in which formulae are written in zbMATH had changed~\cite{Schubotz2019b}.
   This method is currently used in production for articles that do not have references with resolvable \texttt{mscs}.
 \end{description}
 
