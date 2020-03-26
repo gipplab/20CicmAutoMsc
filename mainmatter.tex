@@ -13,16 +13,15 @@ They criticize the micro averaged $F_1$ measure especially if the average is app
 They suggest to train classifiers for a precision of $95\%$ and assign MSC class label in a recommendation setup.
 Moreover they suggest to measure the human baseline (inter-annotator agreement) for the classification tasks.
 Moreover, they find that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
-In \citeyear{SchonebergS14} \citeauthor{SchonebergS14} implement a method that combines formulae and text using an adapted Part of Speech Tagging.
+In \citeyear{SchonebergS14} \citeauthor{SchonebergS14}~\cite{SchonebergS14} implement a method that combines formulae and text using an adapted Part of Speech Tagging.
 They report a sufficient precision of $>.75$ and not state the recall.
 This method was implemented as recommendation algorithm for the editor at zbMATH.
 However, it is currently only used for papers with few references.
 The editor perceived the recommendations computed by analising the references better than the algorithm developed by \citeauthor{SchonebergS14}.
+The positive effect of mathematical features is confirmed by \citeauthor{SuzukiF17}~\cite{SuzukiF17} which measure the classification performance based on a arxiv and mathoverflow dataset.
+However, \citeauthor{Scharpf2020}~\cite{Scharpf2020} can not confirm a significant improvement of classification for the arxiv while incorporating mathematical identifiers.
+In their experiments they evaluate numerous machine learning methods extending~\cite{Evans17,SojkaNALS19} with regard to accurancy and runtime and find that complex compute intense neural networks do not significantly improve the classification performance.
 
-  \cite{SojkaNALS19}
-  
-   \cite{Evans17}
-   \cite{SuzukiF17}
 
 
 In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
