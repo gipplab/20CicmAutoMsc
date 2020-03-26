@@ -25,24 +25,23 @@ In their experiments they evaluate numerous machine learning methods extending~\
 
 
 In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
-In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
+In particular, we compare the current state of the art technology~\cite{Scharpf2020} with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.\\
+%
+\noindent\fbox{\parbox{\textwidth}{%
 We formulate the following research questions:
-
 \begin{enumerate}
   \def\labelenumi{\arabic{enumi}.}
   \item
-  Which evaluation metrics are most useful to assess the classifications?
+  Which evaluation metrics are most useful to assess the classifications? %Does the micro-averaged-$F_1$-score adequately describe the performance for the pMSCn task?
   \item
-  Do mathematical formulae improve the classifications?
+  Do mathematical formulae as part of the text improve the classifications?
   \item
-  Does Part of Speech preprocessing improve the accuracy of classifications?
+  Does POS preprocessing~\cite{SchonebergS14} improve the accuracy of classifications?
   \item
   Which features are most important for the accurate classification?
   \item
-  How well does the best automatic method currently perform?
-  \item
-  How does this method compare to a human baseline?
-\end{enumerate}
+  How well do automatic methods perform in comparison to a human baseline?
+\end{enumerate}}}
 
 \section{Method}\label{sec:method}
 \smartdiagramset{back arrow disabled=true}
