@@ -70,6 +70,7 @@ To ensure that this selection does not introduce additional bias, we also comput
 \paragraph{Definition of article data format}
 To allow for reproducibility, we created a dedicated dataset from our article selection, which we aim to share with other researchers.
 However, currently, legal restrictions apply and the dataset can not yet be provided for anonymous download at this date.
+However, we can grant access for research purposes as done in the past~\cite{BarthelTB13}.
 Each of the 442,382 articles in the dataset contained the following fields:
 \begin{description}
   \item[de] An eight-digit ID of the document\footnotemark.
@@ -367,9 +368,10 @@ For this purpose, we are leveraging our prior research efforts on affiliation di
 Another extension is a better combination of the different features.
 Especially research on the full MSC code, we will need to use different encoding for the MSC from references and authors.
 However, this new encoding requires more main memory for the model training and can not be done on a standard laptop.
+Thereafter, we will re-investigate the impact of mathematical formulae and since the inherently combined representation of text and formulae was not successful.
 
-Our work represents a first step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
-For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on GitHub.
+Our work represents a further step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
+For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on GitHub\footnote{\url{https://github.com/ag-gipp/20CicmAutoMsc}}.
 We hope that in the future, other application domains requiring an accurate labeling of publications into their respective mathematical subject classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
 
 \paragraph{Acknowledgments} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
