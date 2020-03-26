@@ -5,6 +5,26 @@ In summary, the classification procedure of zbMATH and MR is two-fold.
 First, articles are pre-classified into one of \href{https://msc2020.org}{{63}} coarse-grained MSC subject numbers, which are the two first digits of the first MSC code of each article.
 In a second step, subject editors assign fine-grained MSC codes in their area of expertise.
 
+
+The automated assignments of MSC labels has been analyzed by \citeauthor{RehurekS08}~\cite{RehurekS08} in \citeyear{RehurekS08} on the DML-CZ~\cite{SojkaR07} and NUMDAM~\cite{BoucheL17} full-text corpus.
+They report a micro-averaged $F_1$ score of 81\% for their corpus.
+In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated subject classification for the zbMATH corpus~\cite{BarthelTB13}.
+They criticize the micro averaged $F_1$ measure especially if the average is applied only to the best performing classes. However, they report an micro-averaged $F_1$ score of $67.1\%$ for the zbMATH corpus.
+They suggest to train classifiers for a precision of $95\%$ and assign MSC class label in a recommendation setup.
+Moreover they suggest to measure the human baseline (inter-annotator agreement) for the classification tasks.
+Moreover, they find that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
+In \citeyear{SchonebergS14} \citeauthor{SchonebergS14} implement a method that combines formulae and text using an adapted Part of Speech Tagging.
+They report a sufficient precision of $>.75$ and not state the recall.
+This method was implemented as recommendation algorithm for the editor at zbMATH.
+However, it is currently only used for papers with few references.
+The editor perceived the recommendations computed by analising the references better than the algorithm developed by \citeauthor{SchonebergS14}.
+
+  \cite{SojkaNALS19}
+  
+   \cite{Evans17}
+   \cite{SuzukiF17}
+
+
 In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
 In particular, we compare the current state of the art technology with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
 We formulate the following research questions:
@@ -340,15 +360,6 @@ However, this new encoding requires more main memory for the model training and 
 Our work represents a first step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
 For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on GitHub.
 We hope that in the future, other application domains requiring an accurate labeling of publications into their respective mathematical subject classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
-
-\section{related work}
-\begin{itemize}
-  \item \cite{SojkaNALS19}
-  \item \cite{RehurekS08}
-  \item \cite{Evans17}
-  \item \cite{SuzukiF17}
-  \item \cite{BarthelTB13}
-\end{itemize}
 
 \paragraph{Acknowledgments} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
 The authors would like to express their gratitude to Felix Hamborg, and Terry Ruas for their advice in the most recent machine learning technology.
