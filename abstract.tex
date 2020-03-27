@@ -1,8 +1,8 @@
 Authors of research papers in the fields of mathematics, and other math-heavy disciplines commonly employ the Mathematics Subject Classification (MSC) scheme to search for relevant literature.
 The MSC is a hierarchical alphanumerical classification scheme that allows librarians to specify one or multiple codes for publications.
-Digital Mathematical Libraries and reviewing services, such as zbMATH and Mathematical Reviews (MR) rely on these the MSC in their workflows to organize abstracts and reviews.
-Therefore the editors manually assign a coarse-grained classification that determines the subject editor, which then performs the fine-grained labeling.
+Digital Libraries in Mathematics, as well as reviewing services, such as zbMATH and Mathematical Reviews (MR) rely on these MSC labels in their workflows to organize abstracts and reviews.
+Therefore, editors manually assign a coarse-grained classification, which determines the subject editor who then performs the fine-grained labeling.
 
-In this paper, we investigate the feasibility of automatically assigning a coarse-grained primary classification, by regarding the problem as a multi class classification machine learning task.
-We find that the most advanced methods achieve \(F_{1}\)-scores of over 77\%, which is remarkably close to the agreement of zbMATH and MR of 81\%.
-Moreover, we find that the methods confidence score allows us the reduce the manual coarse-grained classification effort to 14\% while maintaining a precision of 81\% for automatically classified articles.
+In this paper, we investigate the feasibility of automatically assigning a coarse-grained primary classification using the MSC scheme, by regarding the problem as a multi class classification machine learning task.
+We find that the our method achieves an \(F_{1}\)-score of over 77\%, which is remarkably close to the agreement of zbMATH and MR (\(F_{1}\)-score of 81\%).
+Moreover, we find that the method's confidence score allows reducing the effort by 86\% compared to the manual coarse-grained classification effort while maintaining a precision of 81\% for automatically classified articles.

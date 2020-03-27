@@ -1,34 +1,35 @@
 \section{Introduction}\label{sec:intro}
-zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified over 135k articles in the year 2019 using the Mathematics Subject Classification~(MSC)~\cite{Khnemund2016}.
-With more than \href{https://zbmath.org/classification/}{{6,600}} MSC codes, this classification task requires significant in-depth knowledge of various sub-fields of mathematics to determine the correct MSC codes of the articles.
+zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified over 135k articles in the year 2019 alone using the Mathematics Subject Classification~(MSC)~\cite{Khnemund2016}.
+With more than \href{https://zbmath.org/classification/}{{6,600}} MSC codes, this classification task requires significant in-depth knowledge of various sub-fields of mathematics to determine the fitting MSC codes for each article.
 In summary, the classification procedure of zbMATH and MR is two-fold.
 First, articles are pre-classified into one of \href{https://msc2020.org}{{63}} coarse-grained MSC subject numbers, which are the two first digits of the first MSC code of each article.
 In a second step, subject editors assign fine-grained MSC codes in their area of expertise.
 
 
 The automated assignments of MSC labels has been analyzed by \citeauthor{RehurekS08}~\cite{RehurekS08} in \citeyear{RehurekS08} on the DML-CZ~\cite{SojkaR07} and NUMDAM~\cite{BoucheL17} full-text corpus.
-They report a micro-averaged $F_1$ score of 81\% for their corpus.
+They report a micro-averaged $F_1$ score of 81\% for their public corpus.
 In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated subject classification for the zbMATH corpus~\cite{BarthelTB13}.
-They criticize the micro averaged $F_1$ measure especially if the average is applied only to the best performing classes. However, they report an micro-averaged $F_1$ score of $67.1\%$ for the zbMATH corpus.
-They suggest to train classifiers for a precision of $95\%$ and assign MSC class label in a recommendation setup.
-Moreover they suggest to measure the human baseline (inter-annotator agreement) for the classification tasks.
-Moreover, they find that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
-In \citeyear{SchonebergS14} \citeauthor{SchonebergS14}~\cite{SchonebergS14} implement a method that combines formulae and text using an adapted Part of Speech Tagging.
-They report a sufficient precision of $>.75$ and not state the recall.
-This method was implemented as recommendation algorithm for the editor at zbMATH.
-However, it is currently only used for papers with few references.
-The editor perceived the recommendations computed by analising the references better than the algorithm developed by \citeauthor{SchonebergS14}.
-The positive effect of mathematical features is confirmed by \citeauthor{SuzukiF17}~\cite{SuzukiF17} which measure the classification performance based on a arxiv and mathoverflow dataset.
-However, \citeauthor{Scharpf2020}~\cite{Scharpf2020} can not confirm a significant improvement of classification for the arxiv while incorporating mathematical identifiers.
-In their experiments they evaluate numerous machine learning methods extending~\cite{Evans17,SojkaNALS19} with regard to accurancy and runtime and find that complex compute intense neural networks do not significantly improve the classification performance.
+They criticized the micro averaged $F_1$ measure, especially, if the average is applied only to the best performing classes. However, they report a micro-averaged $F_1$ score of $67.1\%$ for the zbMATH corpus.
+They suggested training classifiers for a precision of $95\%$ and assigning MSC class labels in a  semi-automated recommendation setup.
+Moreover, they suggested to measure the human baseline (inter-annotator agreement) for the classification tasks.
+Moreover, they found that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
+In \citeyear{SchonebergS14}, \citeauthor{SchonebergS14}~\cite{SchonebergS14} implement a method that combined formulae and text using an adapted Part of Speech Tagging approach.
+Their paper reported a sufficient precision of $>.75$, however, it did not state the recall.
+The proposed method was implemented as a recommendation algorithm for the editor at zbMATH.
+However, the approach is currently only being used for papers with few references.
+The editor of zbMATH has perceived the recommendations computed by simply analyzing the references to perform better than the algorithm developed by \citeauthor{SchonebergS14}.
 
-
+The positive effect of mathematical features is confirmed by \citeauthor{SuzukiF17}~\cite{SuzukiF17}, who measured the classification performance based on an arXiv and mathoverflow dataset.
+In contrast, \citeauthor{Scharpf2020}~\cite{Scharpf2020} could not measure a significant improvement of classification accuracy for the arxiv dataset when incorporating mathematical identifiers.
+In their experiments \citeauthor{Scharpf2020} evaluated numerous machine learning methods, which extended~\cite{Evans17,SojkaNALS19} in terms of accuracy and run-time performance, and found that complex compute-intensive neural networks do not significantly improve the classification performance.
 
 In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
-In particular, we compare the current state of the art technology~\cite{Scharpf2020} with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.\\
+In particular, we compare the current state of the art technology~\cite{Scharpf2020} with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
+
+\\
 %
-\noindent\fbox{\parbox{\textwidth}{%
-We formulate the following research questions:
+\noindent\vspace{-.01\textwidth}\fbox{\parbox{1.02\textwidth}{%
+We define the following research questions:
 \begin{enumerate}
   \def\labelenumi{\arabic{enumi}.}
   \item
@@ -38,9 +39,9 @@ We formulate the following research questions:
   \item
   Does POS preprocessing~\cite{SchonebergS14} improve the accuracy of classifications?
   \item
-  Which features are most important for the accurate classification?
+  Which features are most important for accurate classification?
   \item
-  How well do automatic methods perform in comparison to a human baseline?
+  How well do automated methods perform in comparison to a human baseline?
 \end{enumerate}}}
 
 \section{Method}\label{sec:method}
@@ -48,15 +49,15 @@ We formulate the following research questions:
   \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
 
 
-To investigate the given problem, we first created test and training datasets.
+To investigate the given set of problems, we first created test and training datasets.
 We then investigated the different pMSCn encodings, trained our models and evaluated the results.
 
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles:}
-The zbMATH database has assiged MSC codes to more than \href{https://zbmath.org/?q=cc\%3A*}{3.6 M} articles.
+The zbMATH database has assigned MSC codes to more than \href{https://zbmath.org/?q=cc\%3A*}{3.6 M} articles.
 However, the way in which mathematical articles are written has changed over the last century, and the classification of historic articles is not something we aim to investigate in this article. The first MSC was created in 1990, and has since been updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
-With each update, automated rewrite rules are applied to map the codes from the old MSC to the next MSC version, which is connected with a loss of accurancy of the class labels.
-To obain a coherent and high quality dataset for training and testing, we focused on the recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals.
+With each update, automated rewrite rules are applied to map the codes from the old MSC to the next MSC version, which is connected with a loss of accuracy of the class labels.
+To obtain a coherent and high quality dataset for training and testing, we focused on the more recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals.
 Additionally, we restricted our selection to English articles and limited ourselves to abstracts rather than reviews of articles.
 To be able to compare methods that are based on references and methods using text and title, we only selected articles with at least one reference that could be matched to another article.
 In addition, we excluded articles that were not yet published and processed.
@@ -66,23 +67,23 @@ After applying the filter criteria as mentioned above, we split the resulting li
 For the test set, we aimed to measure the bias of our zbMATH classification labels.
 Therefore, we used the articles for which we knew the classification labels by the MR service as the training set from a previous research project~\cite{Bannister2018}.
 The resulting test set consisted of \(n = 32,230\) articles, and the training set contained 410,152 articles.
-To ensure that this selection does not introduce additional bias, we also computed the standard ten-fold cross validation, cf. Section 3.
-\paragraph{Definition of article data format}
+To ensure that this selection did not introduce additional bias, we also computed the standard ten-fold cross validation, cf. Section 3.
+\paragraph{Definition of article data format:}
 To allow for reproducibility, we created a dedicated dataset from our article selection, which we aim to share with other researchers.
 However, currently, legal restrictions apply and the dataset can not yet be provided for anonymous download at this date.
 However, we can grant access for research purposes as done in the past~\cite{BarthelTB13}.
 Each of the 442,382 articles in the dataset contained the following fields:
 \begin{description}
   \item[de] An eight-digit ID of the document\footnotemark.
-  \item[labels] Actual MSC codes\footnotemark[\value{footnote}].
+  \item[labels] The actual MSC codes\footnotemark[\value{footnote}].
   \item[title] The English title of the document, with LaTeX macros for mathematical language~\cite{Schubotz2019b}.
   \item[text] The text of the abstract with LaTeX macros.
   \item[mscs] A comma separated list of MSC codes generated from the references.
 \end{description}
 \footnotetext{The fields \texttt{de} and \texttt{labels} must not be used as input to the classification algorithm.}
-These 6 fields were provided as CSV files to the algorithms. The \texttt{mscs} field was generated as follows: For each reference in the document, we looked up the MSC codes of the reference. For example, if a certain document contained the references \(A,B,\ C\) that are also in the documents in zbMATH and the MSC codes of \(A,B,C\) are \(a_{1}\) and \(a_{2}\), \(b_{1}\), and \(c_{1} - c_{3}\), respectively, then the field \texttt{mscs} will read \(a_{1}a_{2},b_{1},c_{1}c_{2}c_{3}.\)
+These 5 fields were provided as CSV files to the algorithms. The \texttt{mscs} field was generated as follows: For each reference in the document, we looked up the MSC codes of the reference. For example, if a certain document contained the references \(A,B,C\) that are also in the documents in zbMATH and the MSC codes of \(A,B,C\) are \(a_{1}\) and \(a_{2}\), \(b_{1}\), and \(c_{1} - c_{3}\), respectively, then the field \texttt{mscs} will read \(a_{1}a_{2},b_{1},c_{1}c_{2}c_{3}.\)
 
-After training, we required each of our tested algorithms to return the following fields in CSV format for the testset:
+After training, we required each of our tested algorithms to return the following fields in CSV format for the test sets:
 \begin{description}
   \item[de (integer)] Eight-digit ID of the document.
   \item[method (char(5))] Five-letter ID of the run.
@@ -92,7 +93,7 @@ After training, we required each of our tested algorithms to return the followin
   \item[score (numeric, optional)] Self-confidence of the algorithm about the result.
 \end{description}
 We ensured that the fields \texttt{de}, \texttt{method} and \texttt{pos} form a primary key, i.e., no two entries in the result can have the same combination of values.
-Note that for the current multiclass classification problem, \texttt{pos} is always 1, since only the primary MSC subject number is considered.
+Note that for the current multi-class classification problem, \texttt{pos} is always 1, since only the primary MSC subject number is considered.
 \subsection{Definition of evaluation metrics}
 While the assignment of all MSC codes to each article is a multi-label classification task, the assignment of the primary MSC subject, which we investigate in this paper, is only a multi-class classification problem.
 With \(k = 63\) classes, the probability of randomly choosing the correct class of size \(c_{i}\) is rather low \(P_{i} = \frac{c_{i}}{n}.\)
@@ -104,7 +105,7 @@ H = - \sum_{i = 1}^{k}P_{i}\log P_{i},
 To take into account the imbalance of the dataset, we used weighted versions of precision \(p\), recall \(r,\) and the \(F_{1}\) measure \(f\).
 In particular, the precision \(p = \frac{\sum_{i = 1}^{k}c_{i}p_{i}}{n}\) with the class precision \(p_{i}\). \(r\) and \(F_{1}\) are defined analogously.
 
-In the testset, no entries for the pMSCn 97 (Mathematics education) were included, thus
+In the test set, no entries for the pMSCn 97 (Mathematics education) were included, thus
 
 \[\widehat{H} = \frac{H}{\log k} = \frac{3.44}{\log 62} = .83\]
 
@@ -143,11 +144,11 @@ In this paper, we compare 12 different methods for (automatically) determining t
   According to recent research performed on the arXiv dataset~\cite{Scharpf2020}, we chose a machine learning method with a good trade-off between speed and performance.
   We combined the \texttt{title}, abstract \texttt{text}, and reference \texttt{mscs} of the articles via string concatenation.
   We encoded these string sources using the 'TfidfVectorizer' of the Scikit-learn\footnote{\href{https://swmath.org/software/8058}{{https://swmath.org/software/8058}}~\cite{swSciKit}} python package.
-  We did not alter the 'utf-8' encoding, and did not perform accent striping, or other character normalization methods, with the exception of lowercasing.
+  We did not alter the 'utf-8' encoding, and did not perform accent striping, or other character normalization methods, with the exception of lower-casing.
   Furthermore, we used the 'word' analyzer without a custom stop word list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation.
   The resulting vectors consisted of float64 entries with `l2' norm unit output rows.
   This data was passed to Our encoder.
-  The encoder was trained on the trainingset to subsequently transform or vectorize the sources from the testset.
+  The encoder was trained on the training set to subsequently transform or vectorize the sources from the test set.
   We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn.
   We employed the 'l2' penalty norm with a \(10^{- 4}\) tolerance stopping criterion and a 1.0 regularization.
   Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed.
@@ -230,7 +231,7 @@ Therefore, we will use zbMATH as the reference for the remainder of the paper. A
 
 %The graphics on that page are interactive, to allow investigation of specific msc codes and selection of new comparisons.
 
-\paragraph{Effect of mathematical expressions and part-of-speech tags}
+\paragraph{Effect of mathematical expressions and part-of-speech tags:}
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{mathEncoding.png}
@@ -250,7 +251,7 @@ This held true for all MSC subjects, cf. Figure~\ref{fgPOS}.
 We modified posLingo to output the POS tagged text and used this text as input and retrained scikit learn classifier \texttt{tite2}.
 However, this method did not lead to better results than \texttt{tite}.
 
-\paragraph{Effect of features and human baseline}
+\paragraph{Effect of features and human baseline:}
 The newly developed method combined method~\cite{Scharpf2020} works best in a combined approach that uses \texttt{title}, abstract \texttt{text}, and references \texttt{titer} \(f_{\mathrm{titer}} = 77.3\%.\)
 This method performs significantly better than methods that omit either one of these features.
 The best performing single feature method was \texttt{refs} \(f_{\mathrm{refs}} = 74.6\%\)) followed by \texttt{text} \(f_{\mathrm{text}} = 69.9\%\) and \texttt{titls} \(f_{\mathrm{titls}} = 62.3\%\).
@@ -336,7 +337,7 @@ However, for our methods the difference between the best and worst performing cl
 
 Second, we wanted to find out whether taking into account the mathematical formulae contained in publications could improve the accuracy of classifications.
 In accordance with~\cite{Scharpf2020}, we did not find evidence that mathematical expressions improved pMSCn classification.
-However, we did not evaluate advanced encodings of mathematical formulae. This is subject to future work, cf. Figure~1.
+However, we did not evaluate advanced encodings of mathematical formulae. This is will be a subject of future work, cf. Figure~1.
 
 
 
@@ -345,35 +346,34 @@ However, we did not evaluate advanced encodings of mathematical formulae. This i
 %Which features are most important for the accurate classification?
 %\item
 %How well do automatic methods perform in comparison to a human baseline?
-Third we evaluated the effect of POS-preprocessing~\cite{SchonebergS14}.
-We found that modern machine learning methods do not benefit from the POS tagging based model developed by \cite{SchonebergS14}, cf. Figure~2.
+Third we evaluated the effect of POS-preprocessing~\cite{SchonebergS14} and found that modern machine learning methods do not benefit from the POS tagging based model developed by \cite{SchonebergS14}, cf. Figure~2.
 
 
-Fourth we evaluated which features are most important for the accurate classification.
-We conclude that references have the highest prediction power, followed by abstract text and title.
+Fourth we evaluated which features are most important for an accurate classification.
+We conclude that references have the highest prediction power, followed by the abstract text and title.
 
 
 Finally, we evaluated the performance of automatic methods in comparison to a human baseline.
 We found that our best performing method has an $F_1$ score of 77.2\%.
 The manual classification is significantly better for most classes, cf. Figure 4.
-However, the self-reported score can be used to reduce the classification effort by 86.2\%, without a loss in classification quality.
+However, the self-reported \texttt{score} can be used to reduce the manual classification effort by 86.2\%, without a loss in classification quality.
 %\end{enumerate}
 
-In the future, we plan to extend our work to full MSC codes.
+In the future, we plan to extend our automated methods to predict full MSC codes.
 Moreover, we would like to be able to assign pMSCn to document sections, since we realize that some research just does not fit into one of the classes.
 We also plan to extend the application domain to other mathematical research artifacts, such as blog posts, software, or dataset descriptions.
 As a next step, we plan to generate pMSCn from authors using the same methods we applied for references.
 We speculate that authors will have a high impact on the classification, since authors often publish in the same field.
-For this purpose, we are leveraging our prior research efforts on affiliation disambiguation, which could be used as fallback method for junior authors, who do not yet have a long track record.
+For this purpose, we are leveraging our prior research on affiliation disambiguation, which could be used as fallback method for junior authors, who have not yet established a track record.
 Another extension is a better combination of the different features.
-Especially research on the full MSC code, we will need to use different encoding for the MSC from references and authors.
-However, this new encoding requires more main memory for the model training and can not be done on a standard laptop.
-Thereafter, we will re-investigate the impact of mathematical formulae and since the inherently combined representation of text and formulae was not successful.
+Especially when performing research on the full MSC code-generation, we will need to use a different encoding for the MSC from references and authors.
+However, this new encoding requires more main memory for the training of the model and cannot be done on a standard laptop.
+Thereafter, we will re-investigate the impact of mathematical formulae since the inherently combined representation of text and formulae was not successful.
 
 Our work represents a further step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
 For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on GitHub\footnote{\url{https://github.com/ag-gipp/20CicmAutoMsc}}.
 We hope that in the future, other application domains requiring an accurate labeling of publications into their respective mathematical subject classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
 
-\paragraph{Acknowledgments} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
+\paragraph{Acknowledgments:} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
 The authors would like to express their gratitude to Felix Hamborg, and Terry Ruas for their advice in the most recent machine learning technology.
 \printbibliography[keyword=primary]
