@@ -148,16 +148,16 @@ In this paper, we compare 12 different methods for (automatically) determining t
   \item[titer]
   According to recent research performed on the arXiv dataset~\cite{Scharpf2020}, we chose a machine learning method with a good trade-off between speed and performance.
   We combined the \texttt{title}, abstract \texttt{text}, and reference \texttt{mscs} of the articles via string concatenation.
-  We encoded these string sources using the 'TfidfVectorizer' of the Scikit-learn\footnote{\href{https://swmath.org/software/8058}{{https://swmath.org/software/8058}}~\cite{swSciKit}} python package.
-  We did not alter the 'utf-8' encoding, and did not perform accent striping, or other character normalization methods, with the exception of lower-casing.
-  Furthermore, we used the 'word' analyzer without a custom stop word list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation.
-  The resulting vectors consisted of float64 entries with `l2' norm unit output rows.
+  We encoded these string sources using the \emph{TfidfVectorizer} of the Scikit-learn\footnote{\url{https://swmath.org/software/8058}~\cite{swSciKit}} python package.
+  We did not alter the \emph{utf-8} encoding, and did not perform accent striping, or other character normalization methods, with the exception of lower-casing.
+  Furthermore, we used the \emph{word} analyzer without a custom stop word list, selecting tokens of two or more alphanumeric characters, processing unigrams, and ignoring punctuation.
+  The resulting vectors consisted of float64 entries with \emph{l2} norm unit output rows.
   This data was passed to Our encoder.
   The encoder was trained on the training set to subsequently transform or vectorize the sources from the test set.
-  We chose a lightweight 'LogisticRegression' classifier from the python package Scikit-learn.
-  We employed the 'l2' penalty norm with a \(10^{- 4}\) tolerance stopping criterion and a 1.0 regularization.
+  We chose a lightweight \emph{LogisticRegression} classifier from the python package Scikit-learn.
+  We employed the \emph{l2} penalty norm with a \(10^{- 4}\) tolerance stopping criterion and a 1.0 regularization.
   Furthermore, we allowed intercept constant addition and scaling, but no class weight or custom random state seed.
-  We fitted the classifier using the 'lbfgs' ('Limited-memory BFGS') solver for 100 convergence iterations.
+  We fitted the classifier using the \emph{lbfgs} (Limited-memory BFGS) solver for 100 convergence iterations.
   These choices were made based on a previous study in which we clustered arXiv articles.
   \item[refs] Same as \texttt{titer}, but using only the \texttt{mscs} as input\footnotemark.
   \item[titls] Same as \texttt{titer}, but using only the \texttt{title} as input\footnotemark[\value{footnote}].
@@ -336,7 +336,7 @@ Returning to our research questions, we summarize our findings as follows:
 %\begin{enumerate}
 First, we asked which metrics are best suited to assess classification quality.
 We demonstrated that the classification quality for the primary MSC subject can be evaluated with classical information retrieval methods such as precision, recall and \(F_{1}\)-score.
-We share the observation~\cite{BarthelTB13} that the averages do not reflect the performance of outliers, cf. Figures~1-4.
+We share the observation \citeauthor{BarthelTB13}~\cite{BarthelTB13} that the averages do not reflect the performance of outliers, cf. Figures~1-4.
 However, for our methods the difference between the best and worst performing class was significantly smaller than reported by~\cite{BarthelTB13}.
 %  The downside of binary evaluation approaches is that the degree of incorrectness is not taken into account.
 %  % what do you mean by "incorrect"?
