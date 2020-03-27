@@ -185,7 +185,6 @@ In this paper, we compare 12 different methods for (automatically) determining t
 \end{description}
 
 \footnotetext{Each of these sources was encoded and classified separately.}
-\section{Evaluation and Discussion}\label{sec:eval}
 \begin{table*}[t]
   \hfil
   \begin{tabular}{llll}
@@ -206,7 +205,7 @@ In this paper, we compare 12 different methods for (automatically) determining t
     tite  &  0.713 &  0.722 &  0.713 \\
     \bottomrule
   \end{tabular}
-\hfil
+  \hfil
   \begin{tabular}{llll}
     \toprule
     {} &      p &      r &      f \\
@@ -225,11 +224,13 @@ In this paper, we compare 12 different methods for (automatically) determining t
     tite  &   0.72 &  0.724 &  0.715 \\
     \bottomrule
   \end{tabular}
-\hfil
+  \hfil
   \caption{Precision $p$, recall $r$ and $F_1$-measure $f$ with regard to
-  %in comparison to
-  the baseline \texttt{zb1} (left) and \texttt{mr1} (right).} \label{tb1}
+    %in comparison to
+    the baseline \texttt{zb1} (left) and \texttt{mr1} (right).} \label{tb1}
 \end{table*}
+\section{Evaluation and Discussion}\label{sec:eval}
+
 After executing each of the methods described in the previous section, we calculated the precision \(p\), recall \(r,\) and \(F_{1}\) score \(f\) for each method, cf. Table~\ref{tb1}.
 Overall, we find that results are similar whether we used zbMATH or MR as a baseline in our evaluation.
 Therefore, we will use zbMATH as the reference for the remainder of the paper. All data, including the test results using MR as the baseline is available from: \url{https://automsceval.formulasearchengine.com}.
@@ -237,7 +238,7 @@ Therefore, we will use zbMATH as the reference for the remainder of the paper. A
 %The graphics on that page are interactive, to allow investigation of specific msc codes and selection of new comparisons.
 
 \paragraph{Effect of mathematical expressions and part-of-speech tags:}
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{mathEncoding.png}
   \caption{Mathematical symbols in \texttt{title} and abstract \texttt{text} do not improve the classification quality. Method \texttt{uT1} =left bar; method \texttt{uM1}=right bar%TODO: change x axis label to pMSCn 
@@ -271,6 +272,8 @@ In conclusion, we can say that training a machine learning algorithm that weight
   \centering
   \includegraphics[width=1\textwidth]{ref1-refs.png}
   \caption{Machine learning method (\texttt{refs}, left)  clearly outperforms current production (\texttt{ref1}, right) method using references as only source for classification.}\label{fgRefs}
+\end{figure}
+\begin{figure}[t]
   \includegraphics[width=1\textwidth]{mr1-titer.png}
   \caption{For many pMSCn the best automatic method (\texttt{titer}, right) gets close to the performance of the human baseline (\texttt{mr1} left)}\label{fgHum}
 \end{figure}
@@ -289,15 +292,17 @@ Thus, test set selection does not introduce a significant bias.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=.7\textwidth]{confusion.png}
+  \includegraphics[width=\textwidth]{confusion.png}
   \caption{Confusion matrix \texttt{titer}}\label{fgConfusion}
 \end{figure}
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.48\textwidth]{webFrontend2.png}
-  \includegraphics[width=0.38\textwidth]{webFrontend1.png}
-  \caption{Classification frontend}\label{fgScreenshot}
- \end{figure}
+  \includegraphics[width=\textwidth]{prcurve.png}
+  \caption{Precision recall curve \texttt{titer}.}
+  %very short caption and sparse plot
+  \label{fgPR}
+\end{figure}
+
 After having discussed the strengths and weaknesses of the individual methods tested, we now discuss how the currently best-performing method, \texttt{titer}, can be improved.
 One standard tool to analyze misclassifications is a confusion matrix, cf., Figure~\ref{fgConfusion}.
 In this matrix, off-diagonal elements of the matrix indicate that two sets of classes are often mixed by the classification algorithm.
@@ -341,14 +346,6 @@ Second, we wanted to find out whether taking into account the mathematical formu
 In accordance with~\cite{Scharpf2020}, we did not find evidence that mathematical expressions improved pMSCn classification.
 However, we did not evaluate advanced encodings of mathematical formulae. This is will be a subject of future work, cf. Figure~1.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=.7\textwidth]{prcurve.png}
-  \caption{Precision recall curve \texttt{titer}.}
-  %very short caption and sparse plot
-  \label{fgPR}
-\end{figure}
-
 
 %Does POS preprocessing~\cite{SchonebergS14} improve the accuracy of classifications?
 %\item
@@ -380,9 +377,15 @@ However, this new encoding requires more main memory for the training of the mod
 Thereafter, we will re-investigate the impact of mathematical formulae since the inherently combined representation of text and formulae was not successful.
 
 Our work represents a further step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
-For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on GitHub\footnote{\url{https://github.com/ag-gipp/20CicmAutoMsc}}.
+For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on our website. %\footnote{\url{https://github.com/ag-gipp/20CicmAutoMsc}}.
 We hope that in the future, other application domains requiring an accurate labeling of publications into their respective mathematical subject classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.56\textwidth]{webFrontend2.png}
+  \includegraphics[width=0.42\textwidth]{webFrontend1.png}
+  \caption{Classification frontend}\label{fgScreenshot}
+\end{figure}
 \paragraph{Acknowledgments:} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
 The authors would like to express their gratitude to Felix Hamborg, and Terry Ruas for their advice in the most recent machine learning technology.
 \printbibliography[keyword=primary]
