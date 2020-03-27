@@ -26,7 +26,7 @@ In contrast, \citeauthor{Scharpf2020}~\cite{Scharpf2020} could not measure a sig
 In their experiments \citeauthor{Scharpf2020} evaluated numerous machine learning methods, which extended~\cite{Evans17,SojkaNALS19} in terms of accuracy and run-time performance, and found that complex compute-intensive neural networks do not significantly improve the classification performance.
 
 In this paper, we focus on the coarse-grained classification of the \emph{primary MSC subject number} (pMSCn) and explore how current machine learning approaches can be employed to automate this process.
-In particular, we compare the current state of the art technology~\cite{Scharpf2020} with a system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
+In particular, we compare the current state of the art technology~\cite{Scharpf2020} with a part of speech (POS) preprocessing based system customized for the application in zbMATH from 2014~\cite{SchonebergS14}.
 \\
 
 \noindent\hspace{-.01\textwidth}\fbox{\parbox{1.02\textwidth}{%
@@ -56,7 +56,8 @@ We then investigated the different pMSCn encodings, trained our models and evalu
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles:}
 The zbMATH database has assigned MSC codes to more than \href{https://zbmath.org/?q=cc\%3A*}{3.6 M} articles.
-However, the way in which mathematical articles are written has changed over the last century, and the classification of historic articles is not something we aim to investigate in this article. The first MSC was created in 1990, and has since been updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
+However, the way in which mathematical articles are written has changed over the last century, and the classification of historic articles is not something we aim to investigate in this article.
+The first MSC was created in 1990, and has since been updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
 With each update, automated rewrite rules are applied to map the codes from the old MSC to the next MSC version, which is connected with a loss of accuracy of the class labels.
 To obtain a coherent and high quality dataset for training and testing, we focused on the more recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals.
 Additionally, we restricted our selection to English articles and limited ourselves to abstracts rather than reviews of articles.
@@ -283,12 +284,17 @@ Performing ten fold cross validation on the entire dataset yielded an accuracy o
 Thus, test set selection does not introduce a significant bias.
 
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=.48\textwidth]{confusion.png}
-  \includegraphics[width=0.48\textwidth]{webFrontend.png}
-  \caption{Confusion matrix \texttt{titer} (left); classification frontend (right)}\label{fgScreenshot}\label{fgConfusion}
-\end{figure*}
+  \includegraphics[width=.7\textwidth]{confusion.png}
+  \caption{Confusion matrix \texttt{titer}}\label{fgConfusion}
+\end{figure}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.48\textwidth]{webFrontend2.png}
+  \includegraphics[width=0.38\textwidth]{webFrontend1.png}
+  \caption{Classification frontend}\label{fgScreenshot}
+ \end{figure}
 After having discussed the strengths and weaknesses of the individual methods tested, we now discuss how the currently best-performing method, \texttt{titer}, can be improved.
 One standard tool to analyze misclassifications is a confusion matrix, cf., Figure~\ref{fgConfusion}.
 In this matrix, off-diagonal elements of the matrix indicate that two sets of classes are often mixed by the classification algorithm.
@@ -304,7 +310,7 @@ We use pythons fastAPI under unicorn to handle higher loads.
 %cite fastAPI and unicorn
 Our system is available as a docker container and can thus be scaled on demand.
 %maybe cite docker - although I think it could be like citing python
-To simplify development and testing, we provide a static HTML page as a micro UI.
+To simplify development and testing, we provide a static HTML page as a micro UI, which we call \emph{AutoMSC}.
 This UI displays not only lists/suggests the most likely primary MSC subjects but also the less likely MSC subjects.
 We expect that our UI can support human experts, especially whenever the most likely MSC subject seems unsuitable.
 The result is displayed as a pie-chart, cf., Figure~\ref{fgScreenshot} from \url{https://automscbackend.formulasearchengine.com}.
