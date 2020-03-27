@@ -46,12 +46,15 @@ We define the following research questions:
 \end{enumerate}}}
 
 \section{Method}\label{sec:method}
-\smartdiagramset{back arrow disabled=true}
-  \smartdiagram[flow diagram:horizontal]{Generate zbMATH dataset, match with MR data, train methods, test methods, evaluate results}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{AutoMSC.pdf}
+    \caption{Workflow overview.}\label{fgWorkflow}
+\end{figure}
 
 
 To investigate the given set of problems, we first created test and training datasets.
-We then investigated the different pMSCn encodings, trained our models and evaluated the results.
+We then investigated the different pMSCn encodings, trained our models and evaluated the results, cf Figure~\ref{fgWorkflow}.
 
 \subsection{Generation of a test and training dataset}
 \paragraph{Filter current high quality articles:}
@@ -318,14 +321,6 @@ To use the system in practice, an interface to the citation matching component o
 Moreover, looking at the precision-recall curve (Figure~\ref{fgPR}) for \texttt{titer}, suggests that one can also select a threshold for falling back to manual classification.
 For instance, if one requires a precision that is as high as the precision of the other human classifications by MR, one would need to only consider suggestions with a score \(> 0.5\).
 This would automatically classify \(86.2\%\) of the 135k articles being annually classified by subject experts at zbMATH/MR and thus significantly reduce the number of articles that humans must manually examine without a loss of classification quality.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=.7\textwidth]{prcurve.png}
-  \caption{Precision recall curve \texttt{titer}.}
-  %very short caption and sparse plot
-  \label{fgPR}
-\end{figure}
 This is something we might develop in the future.
 % this refers to what?
 % an issue we might tackle ...
@@ -346,6 +341,13 @@ Second, we wanted to find out whether taking into account the mathematical formu
 In accordance with~\cite{Scharpf2020}, we did not find evidence that mathematical expressions improved pMSCn classification.
 However, we did not evaluate advanced encodings of mathematical formulae. This is will be a subject of future work, cf. Figure~1.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=.7\textwidth]{prcurve.png}
+  \caption{Precision recall curve \texttt{titer}.}
+  %very short caption and sparse plot
+  \label{fgPR}
+\end{figure}
 
 
 %Does POS preprocessing~\cite{SchonebergS14} improve the accuracy of classifications?
