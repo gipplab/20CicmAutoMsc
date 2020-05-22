@@ -1,23 +1,26 @@
 \section{Introduction}\label{sec:intro}
-zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified over 135k articles in the year 2019 alone using the Mathematics Subject Classification~(MSC)~\cite{Khnemund2016}.
+zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified more than 135k articles in 2019 using the Mathematics Subject Classification~(MSC) scheme~\cite{Khnemund2016}.
 With more than \href{https://zbmath.org/classification/}{{6,600}} MSC codes, this classification task requires significant in-depth knowledge of various sub-fields of mathematics to determine the fitting MSC codes for each article.
 In summary, the classification procedure of zbMATH and MR is two-fold.
-First, articles are pre-classified into one of \href{https://msc2020.org}{{63}} coarse-grained MSC subject numbers, which are the two first digits of the first MSC code of each article.
-In a second step, subject editors assign fine-grained MSC codes in their area of expertise.
+First, articles are pre-classified into one of the \href{https://msc2020.org}{{63}} subjects between 00-XX (General) and 97-XX (Mathematics Education).
+In a second step, subject editors assign fine-grained MSC codes in their area of expertise, i.a. with the aim to match potential reviewers.
 
 
 The automated assignments of MSC labels has been analyzed by \citeauthor{RehurekS08}~\cite{RehurekS08} in \citeyear{RehurekS08} on the DML-CZ~\cite{SojkaR07} and NUMDAM~\cite{BoucheL17} full-text corpus.
 They report a micro-averaged $F_1$ score of 81\% for their public corpus.
-In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated subject classification for the zbMATH corpus~\cite{BarthelTB13}.
+In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated
+subject classification for {\color{red} parts of the (?)} the zbMATH corpus~\cite{BarthelTB13}.
 They criticized the micro averaged $F_1$ measure, especially, if the average is applied only to the best performing classes. However, they report a micro-averaged $F_1$ score of $67.1\%$ for the zbMATH corpus.
 They suggested training classifiers for a precision of $95\%$ and assigning MSC class labels in a  semi-automated recommendation setup.
 Moreover, they suggested to measure the human baseline (inter-annotator agreement) for the classification tasks.
 Moreover, they found that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
 In \citeyear{SchonebergS14}, \citeauthor{SchonebergS14}~\cite{SchonebergS14} implement a method that combined formulae and text using an adapted Part of Speech Tagging approach.
 Their paper reported a sufficient precision of $>.75$, however, it did not state the recall.
-The proposed method was implemented as a recommendation algorithm for the editor at zbMATH.
-However, the approach is currently only being used for papers with few references.
-For the majority of papers recommendations are computed by  analyzing the references.
+The proposed method was implemented and is currently being used
+especially to pre-classify general journals {\color{red} [+ Referenz auf Zbl
+  1296.01048 (?)]} with few other information like references.
+For a majority of journals, coarse- and fine-grained codes can be
+found by statistically analyzing the MSC codes from referenced documents matched within the zbMATH corpus.
 The editor of zbMATH hypothesizes that the reference method outperforms the algorithm developed by \citeauthor{SchonebergS14}.
 To confirm or reject this hypothesis was one motivation for this project.
 
@@ -376,9 +379,10 @@ Especially when performing research on the full MSC code-generation, we will nee
 However, this new encoding requires more main memory for the training of the model and cannot be done on a standard laptop.
 Thereafter, we will re-investigate the impact of mathematical formulae since the inherently combined representation of text and formulae was not successful.
 
-Our work represents a further step in the automation of Mathematical Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
+Our work represents a further step in the automation of Mathematics Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
 For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on our website. %\footnote{\url{https://github.com/ag-gipp/20CicmAutoMsc}}.
-We hope that in the future, other application domains requiring an accurate labeling of publications into their respective mathematical subject classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
+We hope that in the future, other application domains requiring an accurate labeling of publications into their respective Mathematics Subject Classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
+In future, zbMATH will use our new method for all journals for which the method by~\citeauthor{SchonebergS14}~\cite{SchonebergS14} has been used since 2014.
 
 \begin{figure}[t]
   \centering
