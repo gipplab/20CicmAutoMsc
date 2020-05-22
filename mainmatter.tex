@@ -8,19 +8,15 @@ In a second step, subject editors assign fine-grained MSC codes in their area of
 
 The automated assignments of MSC labels has been analyzed by \citeauthor{RehurekS08}~\cite{RehurekS08} in \citeyear{RehurekS08} on the DML-CZ~\cite{SojkaR07} and NUMDAM~\cite{BoucheL17} full-text corpus.
 They report a micro-averaged $F_1$ score of 81\% for their public corpus.
-In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated
-subject classification for {\color{red} parts of the (?)} the zbMATH corpus~\cite{BarthelTB13}.
+In \citeyear{BarthelTB13} \citeauthor{BarthelTB13} performed automated subject classification for parts of the the zbMATH corpus~\cite{BarthelTB13}.
 They criticized the micro averaged $F_1$ measure, especially, if the average is applied only to the best performing classes. However, they report a micro-averaged $F_1$ score of $67.1\%$ for the zbMATH corpus.
 They suggested training classifiers for a precision of $95\%$ and assigning MSC class labels in a  semi-automated recommendation setup.
 Moreover, they suggested to measure the human baseline (inter-annotator agreement) for the classification tasks.
 Moreover, they found that the combination of mathematical expressions and textual features improves the $F_1$ score for certain MSC classes substantially.
 In \citeyear{SchonebergS14}, \citeauthor{SchonebergS14}~\cite{SchonebergS14} implement a method that combined formulae and text using an adapted Part of Speech Tagging approach.
 Their paper reported a sufficient precision of $>.75$, however, it did not state the recall.
-The proposed method was implemented and is currently being used
-especially to pre-classify general journals {\color{red} [+ Referenz auf Zbl
-  1296.01048 (?)]} with few other information like references.
-For a majority of journals, coarse- and fine-grained codes can be
-found by statistically analyzing the MSC codes from referenced documents matched within the zbMATH corpus.
+The proposed method was implemented and is currently being used especially to pre-classify general journals~\cite{zbMATH06353861} with few other information like references.
+For a majority of journals, coarse- and fine-grained codes can be found by statistically analyzing the MSC codes from referenced documents matched within the zbMATH corpus.
 The editor of zbMATH hypothesizes that the reference method outperforms the algorithm developed by \citeauthor{SchonebergS14}.
 To confirm or reject this hypothesis was one motivation for this project.
 
