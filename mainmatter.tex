@@ -61,7 +61,7 @@ The zbMATH database has assigned MSC codes to more than \href{https://zbmath.org
 However, the way in which mathematical articles are written has changed over the last century, and the classification of historic articles is not something we aim to investigate in this article.
 The first MSC was created in 1990, and has since been updated every ten years (2000, 2010, and 2020)~\cite{MSC2010}.
 With each update, automated rewrite rules are applied to map the codes from the old MSC to the next MSC version, which is connected with a loss of accuracy of the class labels.
-To obtain a coherent and high quality dataset for training and testing, we focused on the more recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals.
+To obtain a coherent and high quality dataset for training and testing, we focused on the more recent articles from 2000 to 2019, which were classified using the MCS version 2010, and we only considered selected journals\footnote{The list of selected journals is available from \url{https://zbmath.org/?q=dt\%3Aj+st\%3Aj+py\%3A2000-2019.}}.
 Additionally, we restricted our selection to English articles and limited ourselves to abstracts rather than reviews of articles.
 To be able to compare methods that are based on references and methods using text and title, we only selected articles with at least one reference that could be matched to another article.
 In addition, we excluded articles that were not yet published and processed.
