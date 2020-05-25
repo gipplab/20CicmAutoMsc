@@ -2,8 +2,10 @@
 zbMATH\footnote{\href{https://zbmath.org/}{{https://zbmath.org/}}} has classified more than 135k articles in 2019 using the Mathematics Subject Classification~(MSC) scheme~\cite{Khnemund2016}.
 With more than \href{https://zbmath.org/classification/}{{6,600}} MSC codes, this classification task requires significant in-depth knowledge of various sub-fields of mathematics to determine the fitting MSC codes for each article.
 In summary, the classification procedure of zbMATH and MR is two-fold.
-First, articles are pre-classified into one of the \href{https://msc2020.org}{{63}} subjects between 00-XX (General) and 97-XX (Mathematics Education).
+First, all articles are pre-classified into one of  \href{https://msc2020.org}{{63}}  primary subjects spanning from general topics in mathematics (00), to integral equations (45), to mathematics education (97).
 In a second step, subject editors assign fine-grained MSC codes in their area of expertise, i.a. with the aim to match potential reviewers.
+
+
 
 
 The automated assignments of MSC labels has been analyzed by \citeauthor{RehurekS08}~\cite{RehurekS08} in \citeyear{RehurekS08} on the DML-CZ~\cite{SojkaR07} and NUMDAM~\cite{BoucheL17} full-text corpus.
@@ -374,18 +376,20 @@ Another extension is a better combination of the different features.
 Especially when performing research on the full MSC code-generation, we will need to use a different encoding for the MSC from references and authors.
 However, this new encoding requires more main memory for the training of the model and cannot be done on a standard laptop.
 Thereafter, we will re-investigate the impact of mathematical formulae since the inherently combined representation of text and formulae was not successful.
-
-Our work represents a further step in the automation of Mathematics Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
-For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on our website.
-We hope that in the future, other application domains requiring an accurate labeling of publications into their respective Mathematics Subject Classification can benefit from this work, since AutoMSC delivers comparable results to human experts in the first level of MSC labeling, all without requiring manual labor or trained experts.
-In the future, zbMATH will use our new method for all journals for which used to employ the method by~\citeauthor{SchonebergS14}~\cite{SchonebergS14} introduced in 2014.
-
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.56\textwidth]{webFrontend2.png}
   \includegraphics[width=0.42\textwidth]{webFrontend1.png}
   \caption{Classification frontend}\label{fgScreenshot}
 \end{figure}
+
+Our work represents a further step in the automation of Mathematics Subject Classification and can thus support reviewing services, such as \emph{zbMATH} or \emph{Mathematical Reviews}.
+For accessible exploration, we have made the best-performing approaches available in our \emph{AutoMSC} implementation and have shared our code on our website.
+We envision that other application domains requiring an accurate labeling of publications into their respective Mathematics Subject Classification, for example, research paper recommendation systems, or reviewer recommendation systems, will also be able to benefit from this work.
+AutoMSC delivers comparable results to human experts in the first stage of MSC labeling, all without requiring manual labor or trained experts.
+In the future, zbMATH will use our new method for all journals that used to employ the method by~\citeauthor{SchonebergS14}~\cite{SchonebergS14} introduced in 2014.
+
+
 \paragraph{Acknowledgments:} This work was supported by the German Research Foundation (DFG grant GI 1259-1).
 The authors would like to express their gratitude to Felix Hamborg, and Terry Ruas for their advice in the most recent machine learning technology.
 \printbibliography[keyword=primary]
