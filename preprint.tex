@@ -11,16 +11,15 @@
 \RequirePackage{amsmath}
 \RequirePackage{authblk}
 \begin{filecontents*}{references.bib}
-@inproceedings{LastnameYYYY,
-  author    = {Only list authors who have commited to contribute
-  significantly to this research project},
-  title        = {Put a temporary title here},
-  booktitle    = {Proceedings of The Web Conference 2020 (WWW '20), April 20--24, 2020, Taipei, Taiwan},
-  doi          = {10.1145/3366423.3380218}
+@inproceedings{Schubotz2020b,
+  author    = {Moritz Schubotz and Philipp Scharpf and Olaf Teschke and Andreas K\"uhnemund and Corinna Breitinger  and Bela Gipp},
+  title     = {AutoMSC: Automatic Assignment of Mathematics Subject Classification Labels},
+  booktitle = {Proceedings of the 13th Conference on Intelligent Computer Mathematics},
+  date      = 2020,
 }
 \end{filecontents*}
 %TODO Update the following line whenever you change the key of the bibtex entry (currently LastnameYYYY) above.
-\newcommand{\theReferenceText}{\fullcite{LastnameYYYY}}
+\newcommand{\theReferenceText}{\fullcite{Schubotz2020b}}
 % Change title header.tex please.
 \input{header.tex}
 \addbibresource{references.bib}
