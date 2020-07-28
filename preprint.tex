@@ -11,15 +11,32 @@
 \RequirePackage{amsmath}
 \RequirePackage{authblk}
 \begin{filecontents*}{references.bib}
-@inproceedings{Schubotz2020b,
-  author    = {Moritz Schubotz and Philipp Scharpf and Olaf Teschke and Andreas K\"uhnemund and Corinna Breitinger  and Bela Gipp},
-  title     = {AutoMSC: Automatic Assignment of Mathematics Subject Classification Labels},
-  booktitle = {Proceedings of the 13th Conference on Intelligent Computer Mathematics},
-  date      = 2020,
+@inproceedings{SchubotzSTKBG20,
+  author    = {Moritz Schubotz and
+  Philipp Scharpf and
+  Olaf Teschke and
+  Andreas K{\"{u}}hnemund and
+  Corinna Breitinger and
+  Bela Gipp},
+editor    = {Christoph Benzm{\"{u}}ller and
+  Bruce R. Miller},
+title     = {AutoMSC: Automatic Assignment of Mathematics Subject Classification
+  Labels},
+booktitle = {Intelligent Computer Mathematics - 13th International Conference,
+  {CICM} 2020, Bertinoro, Italy, July 26-31, 2020, Proceedings},
+series    = {Lecture Notes in Computer Science},
+volume    = {12236},
+pages     = {237--250},
+publisher = {Springer},
+year      = {2020},
+url       = {https://doi.org/10.1007/978-3-030-53518-6\_15},
+doi       = {10.1007/978-3-030-53518-6\_15},
+biburl    = {https://dblp.org/rec/conf/mkm/SchubotzSTKBG20.bib},
+bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 \end{filecontents*}
 %TODO Update the following line whenever you change the key of the bibtex entry (currently LastnameYYYY) above.
-\newcommand{\theReferenceText}{\fullcite{Schubotz2020b}}
+\newcommand{\theReferenceText}{\fullcite{SchubotzSTKBG20}}
 % Change title header.tex please.
 \input{header.tex}
 \addbibresource{references.bib}
