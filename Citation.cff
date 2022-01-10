@@ -6,14 +6,20 @@ authors:
 preferred-citation:
   type: article
   authors:
-  - family-names: "Lisa"
-    given-names: "Mona"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
-  - family-names: "Bot"
-    given-names: "Hew"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
-  doi: "10.0000/00000"
-  journal: "Journal Title"
+  - family-names: "Schubotz"
+    given-names: "Moritz"
+  - family-names: "Scharpf"
+    given-names: "Philipp"
+  - family-names: "Teschke"
+    given-names: "Olaf"
+  - family-names: "Kühnemund"
+    given-names: "Andreas"
+  - family-names: "Breitinger"
+    given-names: "Corinna"
+  - family-names: "Gipp"
+    given-names: "Bela"
+  doi: "10.1007/978-3-030-53518-6_15"
+  journal: "Intelligent Computer Mathematics - 13th International Conference, CICM 2020, Bertinoro, Italy, July 26-31, 2020, Proceedings"
   month: 9
   start: 1 # First page number
   end: 10 # Last page number
