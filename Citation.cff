@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "Please cite this paper as below."
+authors:
+- family-names: "Schubotz"
+  given-names: "Moritz"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Lisa"
+    given-names: "Mona"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+  - family-names: "Bot"
+    given-names: "Hew"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+  doi: "10.0000/00000"
+  journal: "Journal Title"
+  month: 9
+  start: 1 # First page number
+  end: 10 # Last page number
+  title: "AutoMSC: Automatic Assignment of Mathematics Subject Classification Labels."
+  issue: 1
+  volume: 1
+  year: 2020
